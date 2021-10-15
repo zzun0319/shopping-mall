@@ -1,4 +1,4 @@
-package com.shoppingmall;
+package com.shoppingmall.domain.members;
 
 import com.shoppingmall.domain.members.Member;
 import org.assertj.core.api.Assertions;
