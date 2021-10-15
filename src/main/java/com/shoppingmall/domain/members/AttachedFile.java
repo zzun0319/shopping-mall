@@ -1,8 +1,7 @@
-package com.shoppingmall.domain;
+package com.shoppingmall.domain.members;
 
 import com.shoppingmall.domain.commons.BaseDateInfo;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +9,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachedFile extends BaseDateInfo {
 
@@ -18,7 +16,11 @@ public class AttachedFile extends BaseDateInfo {
     @Column(name = "attached_file_id")
     private Long id;
 
-    private String uploadFileName;
-    private String saveFileName;
+    private String originalFileName;
+    private String storeFileName;
 
+    public AttachedFile(String originalFileName, String storeFileName) {
+        this.originalFileName = originalFileName;
+        this.storeFileName = storeFileName;
+    }
 }

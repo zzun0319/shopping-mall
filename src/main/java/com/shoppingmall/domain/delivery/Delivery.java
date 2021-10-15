@@ -1,4 +1,4 @@
-package com.shoppingmall.domain;
+package com.shoppingmall.domain.delivery;
 
 import com.shoppingmall.domain.commons.BaseDateInfo;
 import com.shoppingmall.domain.enums.DeliveryStatus;

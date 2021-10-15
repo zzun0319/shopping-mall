@@ -1,5 +1,6 @@
-package com.shoppingmall.domain;
+package com.shoppingmall.domain.orders;
 
+import com.shoppingmall.domain.items.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +43,7 @@ public class OrderItem {
     public static OrderItem createOrderItem(Item item, int orderPrice, int orderQuantity) { // item에 price가 있지만, 쿠폰 할인 같은 게 적용된 가격이 들어오도록
         OrderItem orderItem = new OrderItem();
         orderItem.item = item;
-        orderItem.totalPrice = orderPrice;
+        orderItem.totalPrice = item.getPrice() * orderQuantity;
         orderItem.orderQuantity = orderQuantity;
 
         item.reduceStockQuantity(orderQuantity);
@@ -61,6 +62,6 @@ public class OrderItem {
      * @return
      */
     public int getTotalPrice() {
-        return getTotalPrice() * getOrderQuantity();
+        return totalPrice;
     }
 }

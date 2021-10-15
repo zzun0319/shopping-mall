@@ -1,4 +1,4 @@
-package com.shoppingmall.domain;
+package com.shoppingmall.domain.members;
 
 import com.shoppingmall.domain.commons.BaseDateInfo;
 import com.shoppingmall.domain.enums.Grade;
@@ -97,7 +97,7 @@ public class Member extends BaseDateInfo {
      * 비밀번호 변경 메서드
      * @param password
      */
-    public void changePassword(String password){this.password = password;}
+    public void changePassword(String password){ this.password = password; }
 
     /**
      * 파일 세팅 메서드

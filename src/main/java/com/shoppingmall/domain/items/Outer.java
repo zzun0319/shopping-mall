@@ -1,5 +1,6 @@
-package com.shoppingmall.domain;
+package com.shoppingmall.domain.items;
 
+import com.shoppingmall.domain.members.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

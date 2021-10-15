@@ -1,5 +1,9 @@
-package com.shoppingmall.domain;
+package com.shoppingmall.domain.orders;
 
+import com.shoppingmall.domain.delivery.Delivery;
+import com.shoppingmall.domain.enums.PaymentOption;
+import com.shoppingmall.domain.members.Member;
+import com.shoppingmall.domain.payment.Payment;
 import com.shoppingmall.domain.commons.BaseDateInfo;
 import com.shoppingmall.domain.enums.DeliveryStatus;
 import com.shoppingmall.domain.enums.OrderStatus;
@@ -91,8 +95,8 @@ public class Order extends BaseDateInfo {
         }
     }
 
-    public void pay() {
-        payment.pay(getTotalOrderPrice());
+    public void pay(PaymentOption option) {
+        payment.pay(getTotalOrderPrice(), option);
         delivery.startDelivery();
     }
 
