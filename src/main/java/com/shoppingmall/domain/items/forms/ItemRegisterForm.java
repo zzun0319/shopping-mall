@@ -1,14 +1,16 @@
 package com.shoppingmall.domain.items.forms;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
-import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotEmpty;
 
-@MappedSuperclass
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemRegisterForm {
 
     @NotEmpty

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세보기</title>
+</head>
+<body>
+    <!-- 상속을 안 쓰는 게 더 효율적인 것 같은데.. -->
+    <div th:if="${upper != null}">
+        <table border="1">
+            <tr>
+                <td th:text="#{label.item.name}">NAME</td>
+                <td th:text="${upper.name}"></td>
+            </tr>
+            <tr>
+                <td th:text="#{label.item.price}">PRICE</td>
+                <td th:text="${{upper.price}} + 원"></td>
+            </tr>
+            <tr>
+                <td th:text="#{label.item.stockQuantity}">Quantity</td>
+                <td th:text="${{upper.stockQuantity}} + 벌"></td>
+            </tr>
+            <tr>
+                <td th:text="총장"></td>
+                <td th:text="${upper.totalLength} + cm"></td>
+            </tr>
+            <tr>
+                <td th:text="팔길이"></td>
+                <td th:text="${upper.armLength} + cm"></td>
+            </tr>
+            <tr>
+                <td th:text="어깨너비"></td>
+                <td th:text="${upper.shoulderWidth} + cm"></td>
+            </tr>
+        </table>
+        <form th:object="${form}" th:action="@{/orders}" method="post">
+            <input type="hidden" th:field="*{memberId}">
+            <input type="hidden" name="itemId" th:value="${upper.id}">
+            <input type="number" th:field="*{orderQuantity}" placeholder="주문 수량 입력"> 개 <br>
+            <input type="text" th:field="*{city}" placeholder="도시 입력 ex) 경기도 수원시">
+            <input type="text" th:field="*{street}" placeholder="도로명 주소 입력">
+            <input type="text" th:field="*{zipcode}" placeholder="우편번호 입력">
+            <select th:field="*{option}">
+                <option value="">결제 수단 선택</option>
+                <option th:each="opt : ${options}" th:value="${{opt}}">[[${opt.desc}]]</option>
+            </select>
+            <button type="submit">주문</button>
+        </form>
+    </div>
+    <div th:if="${outer != null}">
+        <table border="1">
+            <tr>
+                <td th:text="#{label.item.name}">NAME</td>
+                <td th:text="${outer.name}"></td>
+            </tr>
+            <tr>
+                <td th:text="#{label.item.price}">PRICE</td>
+                <td th:text="${{outer.price}} + 원"></td>
+            </tr>
+            <tr>
+                <td th:text="#{label.item.stockQuantity}">Quantity</td>
+                <td th:text="${{outer.stockQuantity}} + 벌"></td>
+            </tr>
+            <tr>
+                <td th:text="총장"></td>
+                <td th:text="${outer.totalLength} + cm"></td>
+            </tr>
+            <tr>
+                <td th:text="무게"></td>
+                <td th:text="${outer.weight} + cm"></td>
+            </tr>
+            <tr>
+                <td th:text="팔길이"></td>
+                <td th:text="${outer.armLength} + cm"></td>
+            </tr>
+        </table>
+        <form th:object="${form}" th:action="@{/orders}" method="post">
+            <input type="hidden" th:field="*{memberId}">
+            <input type="hidden" name="itemId" th:value="${outer.id}">
+            <input type="number" th:field="*{orderQuantity}">
+            <input type="text" th:field="*{city}" placeholder="도시 입력 ex) 경기도 수원시">
+            <input type="text" th:field="*{street}" placeholder="도로명 주소 입력">
+            <input type="text" th:field="*{zipcode}" placeholder="우편번호 입력">
+            <select th:field="*{option}">
+                <option value="">결제 수단 선택</option>
+                <option th:each="opt : ${options}" th:value="${{opt}}">[[${opt.desc}]]</option>
+            </select>
+            <button type="submit">주문</button>
+        </form>
+    </div>
+    <div th:if="${pants != null}">
+        <table border="1">
+            <tr>
+                <td th:text="#{label.item.name}">NAME</td>
+                <td th:text="${pants.name}"></td>
+            </tr>
+            <tr>
+                <td th:text="#{label.item.price}">PRICE</td>
+                <td th:text="${{pants.price}} + 원"></td>
+            </tr>
+            <tr>
+                <td th:text="#{label.item.stockQuantity}">Quantity</td>
+                <td th:text="${{pants.stockQuantity}} + 벌"></td>
+            </tr>
+            <tr>
+                <td th:text="총장"></td>
+                <td th:text="${pants.totalLength} + cm"></td>
+            </tr>
+            <tr>
+                <td th:text="허리"></td>
+                <td th:text="${pants.waist} + inch"></td>
+            </tr>
+            <tr>
+                <td th:text="허벅지"></td>
+                <td th:text="${pants.thighWidth} + cm"></td>
+            </tr>
+        </table>
+        <form th:object="${form}" th:action="@{/orders}" method="post">
+            <input type="hidden" th:field="*{memberId}">
+            <input type="hidden" name="itemId" th:value="${pants.id}">
+            <input type="number" th:field="*{orderQuantity}">
+            <input type="text" th:field="*{city}" placeholder="도시 입력 ex) 경기도 수원시">
+            <input type="text" th:field="*{street}" placeholder="도로명 주소 입력">
+            <input type="text" th:field="*{zipcode}" placeholder="우편번호 입력">
+            <select th:field="*{option}">
+                <option value="">결제 수단 선택</option>
+                <option th:each="opt : ${options}" th:value="${{opt}}">[[${opt.desc}]]</option>
+            </select>
+            <button type="submit">주문</button>
+        </form>
+    </div>
+</body>
+</html>

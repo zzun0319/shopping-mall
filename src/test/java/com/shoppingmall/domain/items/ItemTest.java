@@ -1,4 +1,4 @@
-package com.shoppingmall.items;
+package com.shoppingmall.domain.items;
 
 import com.shoppingmall.domain.items.Item;
 import com.shoppingmall.domain.items.Outer;

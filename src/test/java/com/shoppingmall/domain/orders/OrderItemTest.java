@@ -1,4 +1,4 @@
-package com.shoppingmall;
+package com.shoppingmall.domain.orders;
 
 import com.shoppingmall.domain.items.Pants;
 import com.shoppingmall.domain.items.Upper;

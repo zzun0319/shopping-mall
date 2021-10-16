@@ -1,4 +1,4 @@
-package com.shoppingmall;
+package com.shoppingmall.domain.delivery;
 
 import com.shoppingmall.domain.delivery.Delivery;
 import com.shoppingmall.domain.enums.DeliveryStatus;
