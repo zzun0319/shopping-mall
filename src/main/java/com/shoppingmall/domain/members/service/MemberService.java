@@ -1,12 +1,20 @@
-package com.shoppingmall.domain.members;
+package com.shoppingmall.domain.members.service;
 
+import com.shoppingmall.domain.members.AttachedFile;
+import com.shoppingmall.domain.members.Member;
+import com.shoppingmall.domain.members.dtos.PermitApiDto;
+import com.shoppingmall.domain.members.dtos.PermitDto;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
 import com.shoppingmall.domain.members.forms.MemberLoginForm;
+import com.shoppingmall.domain.utils.FileStoreUtil;
+import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -15,6 +23,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FileStoreUtil fileStoreUtil;
 
     /**
      * 회원가입시 아이디 중복 체크
@@ -32,8 +41,16 @@ public class MemberService {
      * @return 가입 후 할당된 member_id 반환
      */
     @Transactional
-    public Long join(MemberJoinForm form) {
+    public Long join(MemberJoinForm form) throws IOException {
+
         Member member = Member.createMember(form.getName(), form.getLoginId(), form.getPassword());
+
+        // 첨부파일이 있으면 저장
+        if(!form.getSalesPermissionFile().isEmpty()){
+            AttachedFile attachedFile = fileStoreUtil.storeAttachedFile(form.getSalesPermissionFile());
+            member.setFile(attachedFile);
+        }
+
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();
     }
@@ -61,5 +78,26 @@ public class MemberService {
         Member member = om.get();
         member.changePassword(form.getNewPassword());
         return member.getId();
+    }
+
+    /**
+     * 뷰로 판매허가 변경 메서드
+     * @param permitDto
+     */
+    @Transactional
+    public void updatePermission(PermitDto permitDto) {
+        Optional<Member> om = memberRepository.findByLoginId(permitDto.getLoginId());
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원"));
+        member.permitSaleChange("abc1234", permitDto.getSaleAvailable());
+    }
+
+    /**
+     * API로 판매허가 바꾸기
+     * @param permitApiDto
+     */
+    public void changePermissionWithApi(PermitApiDto permitApiDto) {
+        Optional<Member> om = memberRepository.findByLoginId(permitApiDto.getLoginId());
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원"));
+        member.permitSaleChange(permitApiDto.getPermitPassword(), permitApiDto.getPermission());
     }
 }

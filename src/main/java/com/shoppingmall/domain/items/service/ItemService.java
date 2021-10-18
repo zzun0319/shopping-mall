@@ -9,7 +9,7 @@ import com.shoppingmall.domain.items.forms.PantsRegisterForm;
 import com.shoppingmall.domain.items.forms.UpperRegisterForm;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.MemberRepository;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.exceptions.NoSuchItemException;
 import com.shoppingmall.exceptions.NotHaveRightToChangeException;
 import lombok.RequiredArgsConstructor;

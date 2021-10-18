@@ -5,14 +5,12 @@ import com.shoppingmall.domain.items.forms.PantsRegisterForm;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.items.service.ItemService;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.MemberRepository;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.exceptions.NotEnoughStockException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -56,7 +54,7 @@ public class ItemServiceTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
         memberRepository.save(member);
 
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, member, 32, 71, 58);
@@ -87,7 +85,7 @@ public class ItemServiceTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
         Member savedMember = memberRepository.save(member);
 
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, member, 32, 71, 58);

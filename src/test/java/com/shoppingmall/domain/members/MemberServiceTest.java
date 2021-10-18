@@ -3,6 +3,8 @@ package com.shoppingmall.domain.members;
 import com.shoppingmall.domain.enums.Grade;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
+import com.shoppingmall.domain.members.repository.MemberRepository;
+import com.shoppingmall.domain.members.service.MemberService;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +51,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 메서드")
-    void join() {
+    void join() throws IOException {
 
         // given
         MemberJoinForm memberJoinForm = new MemberJoinForm("kim5989", "kim3333#", "park");

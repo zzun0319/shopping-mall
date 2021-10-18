@@ -2,20 +2,17 @@ package com.shoppingmall.domain.items;
 
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.MemberRepository;
-import org.assertj.core.api.Assertions;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -34,7 +31,7 @@ public class ItemRepositoryTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
         memberRepository.save(member);
 
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, member, 32, 71, 58);
@@ -57,7 +54,7 @@ public class ItemRepositoryTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
         memberRepository.save(member);
 
         Upper tShirt = Upper.createUpper("tShirt", 30000, 10, member, 50, 70, 40);
@@ -88,7 +85,7 @@ public class ItemRepositoryTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
         memberRepository.save(member);
 
         Upper tShirt = Upper.createUpper("tShirt", 30000, 10, member, 50, 70, 40);

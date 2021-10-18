@@ -4,7 +4,7 @@ import com.shoppingmall.domain.enums.Grade;
 import com.shoppingmall.domain.items.repository.BasketItemRepository;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.MemberRepository;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +39,8 @@ class BasketItemRepositoryTest {
         itemRepository.save(knit);
         itemRepository.save(jacket1);
 
-        BasketItem basketItem1 = BasketItem.createBasketItem(knit, 2);
-        BasketItem basketItem2 = BasketItem.createBasketItem(jacket1, 2);
+        BasketItem basketItem1 = BasketItem.createBasketItem(knit, member,2);
+        BasketItem basketItem2 = BasketItem.createBasketItem(jacket1, member,2);
         BasketItem saved1 = basketItemRepository.save(basketItem1);
         BasketItem saved2 = basketItemRepository.save(basketItem2);
 
@@ -73,8 +73,8 @@ class BasketItemRepositoryTest {
         itemRepository.save(knit);
         itemRepository.save(jacket1);
 
-        BasketItem basketItem1 = BasketItem.createBasketItem(knit, 2);
-        BasketItem basketItem2 = BasketItem.createBasketItem(jacket1, 2);
+        BasketItem basketItem1 = BasketItem.createBasketItem(knit, member,2);
+        BasketItem basketItem2 = BasketItem.createBasketItem(jacket1, member,2);
         BasketItem saved1 = basketItemRepository.save(basketItem1);
         BasketItem saved2 = basketItemRepository.save(basketItem2);
 
@@ -87,6 +87,34 @@ class BasketItemRepositoryTest {
         List<BasketItem> all = basketItemRepository.findAll();
 
         assertThat(all.size()).isEqualTo(0);
+
+    }
+
+    @Test
+    @DisplayName("멤버id로_장바구니_아이템_조회")
+    void 멤버id로_장바구니_아이템_조회() throws Exception {
+
+        // given
+        Member member = new Member("member1", "member111", "member111#", Grade.USER, true);
+        Upper knit = Upper.createUpper("니트1", 70000, 0, member, 50, 70, 40);
+        Outer jacket1 = Outer.createOuter("Jacket1", 100000, 0, member, 100, 3, 45);
+
+        Member savedMember = memberRepository.save(member);
+        itemRepository.save(knit);
+        itemRepository.save(jacket1);
+
+        BasketItem basketItem1 = BasketItem.createBasketItem(knit, member,2);
+        BasketItem basketItem2 = BasketItem.createBasketItem(jacket1, member,2);
+        basketItemRepository.save(basketItem1);
+        basketItemRepository.save(basketItem2);
+
+        em.flush();
+
+        // when
+        List<BasketItem> basketItems = basketItemRepository.findBasketItemsByMember(savedMember);
+
+        // then
+        assertThat(basketItems.size()).isEqualTo(2);
 
     }
 }

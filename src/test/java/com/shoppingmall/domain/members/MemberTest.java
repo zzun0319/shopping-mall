@@ -17,7 +17,7 @@ class MemberTest {
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
 
         // when
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
 
         // then
         assertThat(member.getSaleAvailable()).isTrue();
@@ -31,7 +31,7 @@ class MemberTest {
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
 
         // when
-        member.permitSale("adore32"); // 판매 허가를 위한 비밀번호 틀렸을 때
+        member.permitSaleChange("adore32", true); // 판매 허가를 위한 비밀번호 틀렸을 때
 
         // then
         assertThat(member.getSaleAvailable()).isFalse();

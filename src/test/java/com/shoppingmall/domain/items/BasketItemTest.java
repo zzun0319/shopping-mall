@@ -17,7 +17,7 @@ class BasketItemTest {
         Member member = new Member("member1", "member111", "member111#", Grade.USER, true);
         Upper knit = Upper.createUpper("니트1", 70000, 1, member, 50, 70, 40);
 
-        BasketItem basketItem = BasketItem.createBasketItem(knit, 2);
+        BasketItem basketItem = BasketItem.createBasketItem(knit, member,2);
         assertThat(basketItem.isSoldOut()).isFalse();
         basketItem.statusUpdate();
         assertThat(basketItem.isSoldOut()).isTrue();

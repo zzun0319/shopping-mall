@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>장바구니</title>
+</head>
+<body>
+  <table border="1">
+    <tr>
+        <td>선택</td>
+        <td>상품명</td>
+        <td>가격</td>
+        <td>담은 수량</td>
+        <td>총 가격</td>
+    </tr>
+    <tr th:each="bi : ${basketItems}">
+        <td><input th:if="${!bi.soldOut}" type="checkbox" name="select" th:value="${bi.id}"></td>
+        <td th:text="${bi.item.name}"></td>
+        <td th:text="${{bi.item.price}}"></td>
+        <td th:text="${bi.quantity}"></td>
+        <td th:text="${{bi.getTotalPrice()}}"></td>
+    </tr>
+  </table>
+</body>
+</html>

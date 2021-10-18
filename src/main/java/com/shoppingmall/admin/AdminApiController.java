@@ -1,7 +1,7 @@
 package com.shoppingmall.admin;
 
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.MemberRepository;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.members.dtos.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminController {
+public class AdminApiController {
 
     private final MemberRepository memberRepository;
 
     /**
-     * 멤버들의 리스트 조회하기
+     * 전체 멤버 리스트 조회하기
      * @param pageable
      * @return
      */

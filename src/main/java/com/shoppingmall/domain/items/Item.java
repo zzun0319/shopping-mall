@@ -28,6 +28,13 @@ public abstract class Item extends BaseDateInfo {
     @JoinColumn(name = "member_id")
     protected Member salesman;
 
+    /**
+     * 자식 클래스에서 상품 생성 시 사용할 생성자
+     * @param name
+     * @param price
+     * @param stockQuantity
+     * @param salesman
+     */
     protected Item(String name, Integer price, Integer stockQuantity, Member salesman) {
         if(!salesman.getSaleAvailable()){
             throw new CannotSaleItemException("상품 판매 허가가 나지 않았습니다.");

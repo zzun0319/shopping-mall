@@ -1,6 +1,8 @@
 package com.shoppingmall.domain.items.repository;
 
 import com.shoppingmall.domain.items.BasketItem;
+import com.shoppingmall.domain.members.Member;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +35,7 @@ public interface BasketItemRepository extends JpaRepository<BasketItem, Long> {
 
     @Query("SELECT b FROM BasketItem b JOIN FETCH b.item")
     List<BasketItem> findAllWithItems();
+
+    @EntityGraph(attributePaths = {"item"})
+    List<BasketItem> findBasketItemsByMember(Member member);
 }

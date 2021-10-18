@@ -27,7 +27,7 @@ public class OrderTest {
 
         // given
         Member salesMan = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        salesMan.permitSale("abc1234");
+        salesMan.permitSaleChange("abc1234", true);
 
         Pants jean1 = Pants.createPants("Jean1", 50000, 3, salesMan, 100, 28, 90);
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
@@ -57,7 +57,7 @@ public class OrderTest {
 
         // given
         Member salesMan = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        salesMan.permitSale("abc1234");
+        salesMan.permitSaleChange("abc1234", true);
 
         Pants jean1 = Pants.createPants("Jean1", 50000, 3, salesMan, 100, 28, 90);
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
@@ -89,7 +89,7 @@ public class OrderTest {
 
         // given
         Member salesMan = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        salesMan.permitSale("abc1234");
+        salesMan.permitSaleChange("abc1234", true);
 
         Pants jean1 = Pants.createPants("Jean1", 50000, 3, salesMan, 100, 28, 90);
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
@@ -121,7 +121,7 @@ public class OrderTest {
 
         // given
         Member salesMan = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        salesMan.permitSale("abc1234");
+        salesMan.permitSaleChange("abc1234", true);
 
         Pants jean1 = Pants.createPants("Jean1", 50000, 3, salesMan, 100, 28, 90);
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);

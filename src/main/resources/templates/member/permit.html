@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>판매 허가 페이지</title>
+</head>
+<body>
+<h2>대기 중인 멤버들</h2>
+<div>
+    <table border="1">
+        <tr>
+            <td></td>
+            <td>이름</td>
+            <td>아이디</td>
+            <td>판매가능여부</td>
+        </tr>
+        <tr th:each="member : ${page.getContent()}">
+            <td th:text="${memberStat.count}"></td>
+            <td th:text="${member.name}"></td>
+            <td><a th:href="@{/members/permit/{memberId}(memberId=${member.id})}">[[${member.loginId}]]</a></td>
+            <td th:if="${member.saleAvailable}" th:text="승인"></td>
+            <td th:if="${!member.saleAvailable}"></td>
+        </tr>
+    </table>
+</div>
+<div>
+    <table border="1">
+        <tr>
+            <td th:if="${page.hasPrevious()}"><button type="button" th:onclick="|location.href='@{/members/permit(page=${page.getNumber()-1})}'|">이전</button></td>
+            <!--        <button th:each="num : ${#numbers.sequence(0,${last})}" th:value="${num+1}"></button>-->
+
+            <td th:if="${page.hasNext()}"><button type="button" th:onclick="|location.href='@{/members/permit(page=${page.getNumber()+1})}'|">다음</button></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

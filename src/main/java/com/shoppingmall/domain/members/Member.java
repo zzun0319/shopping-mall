@@ -30,6 +30,7 @@ public class Member extends BaseDateInfo {
     private Boolean saleAvailable;
 
     @OneToOne(fetch = LAZY, cascade = ALL)
+    @JoinColumn(name = "attached_file_id")
     private AttachedFile file;
 
     /**
@@ -77,9 +78,9 @@ public class Member extends BaseDateInfo {
      * 판매 허가 메서드 (ADMIN만 비밀번호를 알고 바꿀 수 있도록)
      * @param permitPassword
      */
-    public void permitSale(String permitPassword){
+    public void permitSaleChange(String permitPassword, boolean permit){
         if(permitPassword.equals("abc1234")){
-            this.saleAvailable = true;
+            this.saleAvailable = permit;
         }
     }
     

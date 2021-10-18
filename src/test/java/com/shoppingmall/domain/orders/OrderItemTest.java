@@ -18,7 +18,7 @@ class OrderItemTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
 
         Pants jean1 = Pants.createPants("Jean1", 50000, 3, member, 100, 28, 90);
 
@@ -36,7 +36,7 @@ class OrderItemTest {
 
         // given
         Member member = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        member.permitSale("abc1234");
+        member.permitSaleChange("abc1234", true);
 
         Upper shirt1 = Upper.createUpper("T-shirt1", 30000, 5, member, 32, 71, 58);
         OrderItem orderItem = OrderItem.createOrderItem(shirt1, shirt1.getPrice(), 2);

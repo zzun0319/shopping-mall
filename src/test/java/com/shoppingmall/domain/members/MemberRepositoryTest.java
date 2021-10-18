@@ -1,10 +1,14 @@
 package com.shoppingmall.domain.members;
 
 import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -79,5 +83,54 @@ class MemberRepositoryTest {
         // then
         assertThat(result.size()).isEqualTo(1);
 
+    }
+
+    @Test
+    @DisplayName("첨부파일 외래키가 있는 회원만 조회")
+    void fileIsNotNull() throws Exception {
+
+        // given
+        Member member1 = Member.createMember("member1", "member111", "member111#1");
+        member1.setFile(new AttachedFile("original1", "storedName1"));
+        memberRepository.save(member1);
+
+        Member member2 = Member.createMember("member2", "member121", "member111#1");
+        member2.setFile(new AttachedFile("original2", "storedName2"));
+        memberRepository.save(member2);
+
+        Member member3 = Member.createMember("member3", "member123", "member111#1");
+        memberRepository.save(member3);
+
+        em.flush();
+        em.clear();
+
+        // when
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Page<Member> members = memberRepository.findMembersByFileNotNull(pageRequest);
+
+        // then
+        for (Member member : members) {
+            System.out.println("member = " + member.getName());
+        }
+        assertThat(members.getTotalElements()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("id로 멤버 찾아오는데 fetch join으로 file까지 가져오기")
+    void findMemberById() throws Exception {
+
+        // given
+        Member member1 = Member.createMember("member1", "member111", "member111#1");
+        member1.setFile(new AttachedFile("original1", "storedName1"));
+        Member savedMember = memberRepository.save(member1);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Member findMember = memberRepository.findMemberById(savedMember.getId()).get();
+
+        // then
+        assertThat(findMember.getFile().getOriginalFileName()).isEqualTo("original1");
     }
 }

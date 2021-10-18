@@ -1,10 +1,13 @@
 package com.shoppingmall.domain.orders.service;
 
 import com.shoppingmall.domain.delivery.Delivery;
+import com.shoppingmall.domain.items.BasketItem;
 import com.shoppingmall.domain.items.Item;
+import com.shoppingmall.domain.items.repository.BasketItemRepository;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.MemberRepository;
+import com.shoppingmall.domain.members.dtos.MemberDto;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.orders.Order;
 import com.shoppingmall.domain.orders.OrderItem;
 import com.shoppingmall.domain.orders.forms.OrderForm;
@@ -14,6 +17,7 @@ import com.shoppingmall.domain.valuetype.Address;
 import com.shoppingmall.exceptions.NoSuchItemException;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final BasketItemRepository basketItemRepository;
 
     /**
      * 주문 메서드
@@ -58,6 +63,20 @@ public class OrderService {
         orderRepository.save(order);
 
         return order.getId();
+    }
+
+    /**
+     * 장바구니 담기 메서드
+     * @param item
+     * @param memberDto
+     * @param qty
+     */
+    @Transactional
+    public void putInTheBasket(Item item, MemberDto memberDto, int qty) {
+        Optional<Member> om = memberRepository.findById(memberDto.getId());
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원"));
+        BasketItem basketItem = BasketItem.createBasketItem(item, member, qty);
+        basketItemRepository.save(basketItem);
     }
 
 }

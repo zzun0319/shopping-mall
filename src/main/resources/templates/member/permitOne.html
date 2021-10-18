@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>판매 허가 페이지</title>
+</head>
+<body>
+
+    <form th:action th:object="${member}" method="post">
+        <table border="1">
+            <tr>
+                <td>회원 이름</td>
+                <td><input th:field="*{name}" readonly></td>
+            </tr>
+            <tr>
+                <td>회원 아이디</td>
+                <td><input th:field="*{loginId}" readonly></td>
+            </tr>
+            <tr>
+                <td>판매 승인</td>
+                <td>
+                    <input type="radio" id="permit" th:field="*{saleAvailable}" th:value="true"><label for="permit" th:text="승인" /><br>
+                    <input type="radio" id="no_permit" th:field="*{saleAvailable}" th:value="false"><label for="no_permit" th:text="미승인" />
+                </td>
+            </tr>
+            <tr>
+                <td>첨부파일</td>
+                <td><a th:href="@{/members/permit/download/{fileId}(fileId=${member.attachedFile.id})}">
+                    [[${member.attachedFile.originalFileName}]]</a></td>
+            </tr>
+        </table>
+        <button type="submit">저장</button>
+    </form>
+    <a th:href="@{/members/permit}">뒤로 가기</a>
+
+</body>
+</html>

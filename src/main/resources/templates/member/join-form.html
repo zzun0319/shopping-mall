@@ -12,7 +12,7 @@
 </head>
 <body>
     <h2>회원 가입</h2>
-    <form th:action th:object="${joinForm}" method="post">
+    <form th:action th:object="${joinForm}" method="post" enctype="multipart/form-data">
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()} th:text=${err}">글로벌 오류 메시지</p>
         </div>
@@ -36,6 +36,13 @@
             <input id="name" th:field="*{name}" th:errorclass="field-error" class="form-control" placeholder="이름을 입력하세요">
             <div class="field-error" th:errors="*{name}">
                 이름 오류
+            </div>
+        </div>
+        <div>
+            <label for="attachedFile" th:text="#{label.member.attachedFile}">AttachedFile</label>
+            <input type="file" id="attachedFile" th:field="*{salesPermissionFile}" th:errorclass="field-error" class="form-control">
+            <div class="field-error" th:errors="*{salesPermissionFile}">
+                첨부 파일 에러
             </div>
         </div>
         <div>
