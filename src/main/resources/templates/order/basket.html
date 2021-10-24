@@ -3,23 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>장바구니</title>
+    <style>
+        .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+        }
+    </style>
 </head>
 <body>
-  <table border="1">
-    <tr>
-        <td>선택</td>
-        <td>상품명</td>
-        <td>가격</td>
-        <td>담은 수량</td>
-        <td>총 가격</td>
-    </tr>
-    <tr th:each="bi : ${basketItems}">
-        <td><input th:if="${!bi.soldOut}" type="checkbox" name="select" th:value="${bi.id}"></td>
-        <td th:text="${bi.item.name}"></td>
-        <td th:text="${{bi.item.price}}"></td>
-        <td th:text="${bi.quantity}"></td>
-        <td th:text="${{bi.getTotalPrice()}}"></td>
-    </tr>
-  </table>
+    <div th:if="${basketItems.size() == 0}">
+        장바구니가 비어있습니다.
+    </div>
+    <div th:if="${basketItems.size() != 0}">
+        <form th:action="@{/orders}" th:object="${form}" method="post">
+          <table border="1">
+            <tr>
+                <td>선택</td>
+                <td>상품명</td>
+                <td>가격</td>
+                <td>담은 수량</td>
+                <td>총 가격</td>
+                <td>품절여부</td>
+            </tr>
+            <tr th:each="bi : ${basketItems}">
+                <td><input th:if="${!bi.soldOut}" type="checkbox" name="select" th:value="${bi.id}"></td>
+                <td th:text="${bi.item.name}"></td>
+                <td th:text="${{bi.item.price}}"></td>
+                <td th:text="${bi.quantity}"></td>
+                <td th:text="${{bi.getTotalPrice()}}"></td>
+                <td th:if="${bi.soldOut}" th:text="품절"></td>
+            </tr>
+          </table>
+            <div>
+                배송주소: <input th:field="*{city}" th:errorclass="field-error" placeholder="도, 시를 입력해주세요. ex) 경기도 수원시"> <br>
+                        <div class="field-error" th:errors="*{city}"></div>
+                        <input th:field="*{street}" placeholder="도로명 주소를 입력해주세요. ex) 월드컵로 2XX"> <br>
+                        <div class="field-error" th:errors="*{street}"></div>
+                        <input th:field="*{zipcode}" placeholder="우편 번호를 입력해주세요. ex) 12300"> <br>
+                        <div class="field-error" th:errors="*{zipcode}"></div>
+            </div>
+            <button type="submit">주문</button>
+        </form>
+    </div>
+  <a th:href="@{/items}">상품 목록</a>
+  <a th:href="@{/}">홈으로</a>
 </body>
+<script th:inline="javascript">
+    const result = [[${msg}]];
+	if(result != "" && result.length > 0){
+		alert(result);
+	}
+</script>
 </html>

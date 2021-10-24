@@ -77,11 +77,13 @@ class MemberServiceTest {
         MemberJoinForm memberJoinForm = new MemberJoinForm("kim5989", "kim3333#", "park");
         Long joinedMemberId = memberService.join(memberJoinForm);
 
+        Member member = memberRepository.findById(joinedMemberId).get();
+
         ChangePasswordForm changePasswordForm
-                = new ChangePasswordForm(joinedMemberId, "kim3333#", "new333@", "new333@");
+                = new ChangePasswordForm("kim3333#", "new333@", "new333@");
 
         // when
-        Long changedMemberId = memberService.passwordChange(changePasswordForm);
+        Long changedMemberId = memberService.passwordChange(member, changePasswordForm);
 
         // then
         Optional<Member> om = memberRepository.findById(changedMemberId);

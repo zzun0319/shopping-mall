@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>결제 화면</title>
+    <style>
+        .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <form th:object="${form}" th:action method="post">
+        <input type="hidden" name="totalPrice" th:value="${totalPrice}">
+        <select th:field="*{option}" th:errorclass="field-error">
+            <option value="">결제 수단 선택</option>
+            <option th:each="opt : ${options}" th:value="${{opt}}">[[${opt.desc}]]</option>
+        </select>
+        <div class="field-error" th:errors="*{option}"></div>
+        <table>
+            <tr>
+                <td>결제해야할 금액</td>
+                <td>[[${{totalPrice}}]]원</td>
+            </tr>
+            <tr>
+                <td>결제 금액 입력</td>
+                <td><input type="number" th:field="*{paidPrice}" th:errorclass="field-error">원</td>
+            </tr>
+        </table>
+            <div class="field-error" th:errors="*{paidPrice}"></div>
+        <button type="submit">결제</button>
+    </form>
+</body>
+</html>

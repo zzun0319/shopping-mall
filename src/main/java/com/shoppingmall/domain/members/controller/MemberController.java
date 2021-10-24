@@ -4,6 +4,7 @@ import com.shoppingmall.domain.members.AttachedFile;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.members.dtos.PermitApiDto;
 import com.shoppingmall.domain.members.dtos.PermitDto;
+import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.repository.AttachedFileRepository;
 import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.members.service.MemberService;
@@ -193,6 +194,13 @@ public class MemberController {
         return "Permission Change Success"; // 이 부분도 Swagger 써서 여러 다음 행동 진행 가능하도록 바꾸기
     }
 
+    /**
+     * 첨부 파일 다운로드
+     * @param id
+     * @return
+     * @throws MalformedURLException
+     * @throws NoSuchFileException
+     */
     @GetMapping("/permit/download/{fileId}")
     public ResponseEntity<Resource> downloadAttachedFile(@PathVariable("fileId") Long id) throws MalformedURLException, NoSuchFileException {
 
@@ -209,5 +217,31 @@ public class MemberController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(resource);
+    }
+
+    @GetMapping("/update/{memberId}")
+    public String updatePasswordPage(@PathVariable("memberId") Long memberId, Model model){
+        model.addAttribute("form", new ChangePasswordForm());
+        return "member/password-change-form";
+    }
+
+    @PostMapping("/update/{memberId}")
+    public String passwordUpdate(@PathVariable("memberId") Member member, @Validated @ModelAttribute("form") ChangePasswordForm form, BindingResult bindingResult) {
+
+        if(!member.getPassword().equals(form.getOldPassword())){
+            bindingResult.rejectValue("oldPassword", "wrongPwd");
+        }
+
+        if(!form.getNewPassword().equals(form.getNewPasswordCheck())){
+            bindingResult.rejectValue("newPasswordCheck", "wrongPwd");
+        }
+
+        if(bindingResult.hasErrors()){
+            return "member/password-change-form";
+        }
+
+        memberService.passwordChange(member, form);
+
+        return "redirect:/";
     }
 }

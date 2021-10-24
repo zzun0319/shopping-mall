@@ -9,4 +9,8 @@ public enum PaymentStatus {
     PaymentStatus(String desc) {
         this.desc = desc;
     }
+
+    public String getDesc() {
+        return desc;
+    }
 }

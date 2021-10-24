@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>등록할 상품 종류 선택</title>
+</head>
+<body>
+    <form method="post" th:action>
+        <select name="itemType">
+            <option value="">==상품 종류 선택==</option>
+            <option th:each="type : ${itemTypes}" th:value="${type.code}" th:text="${type.displayName}"></option>
+        </select>
+        <button type="submit">다음</button>
+    </form>
+</body>
+</html>

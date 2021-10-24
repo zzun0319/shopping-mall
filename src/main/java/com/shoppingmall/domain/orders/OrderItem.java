@@ -36,11 +36,10 @@ public class OrderItem {
     /**
      * OrderItem 생성 메서드
      * @param item 주문상품
-     * @param orderPrice item의 price가 그대로 들어올 수도 있지만 쿠폰 할인 같은 게 적용된 가격이 들어올 수도 있다
      * @param orderQuantity 주문 수량
      * @return 필드를 채운 orderItem 객체
      */
-    public static OrderItem createOrderItem(Item item, int orderPrice, int orderQuantity) { // item에 price가 있지만, 쿠폰 할인 같은 게 적용된 가격이 들어오도록
+    public static OrderItem createOrderItem(Item item, int orderQuantity) { // item에 price가 있지만, 쿠폰 할인 같은 게 적용된 가격이 들어오도록
         OrderItem orderItem = new OrderItem();
         orderItem.item = item;
         orderItem.totalPrice = item.getPrice() * orderQuantity;

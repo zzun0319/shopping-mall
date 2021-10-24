@@ -4,9 +4,8 @@ import com.shoppingmall.domain.items.Item;
 import com.shoppingmall.domain.items.Outer;
 import com.shoppingmall.domain.items.Pants;
 import com.shoppingmall.domain.items.Upper;
-import com.shoppingmall.domain.items.forms.OuterRegisterForm;
-import com.shoppingmall.domain.items.forms.PantsRegisterForm;
-import com.shoppingmall.domain.items.forms.UpperRegisterForm;
+import com.shoppingmall.domain.items.forms.ItemRegisterForm;
+import com.shoppingmall.domain.items.forms.ItemUpdateForm;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.members.repository.MemberRepository;
@@ -27,42 +26,28 @@ public class ItemService {
     private final MemberRepository memberRepository;
 
     /**
-     * 상품 중 상의 저장 메서드
-     * @param upperForm
+     * 상품 저장 메서드
+     * @param form
      * @param salesman
      * @return
      */
-    public Long saveUpper(UpperRegisterForm upperForm, Member salesman) {
-        Upper upper = Upper.createUpper(upperForm.getName(), upperForm.getPrice(), upperForm.getStockQuantity(), salesman,
-                upperForm.getArmLength(), upperForm.getTotalLength(), upperForm.getShoulderWidth());
-        itemRepository.save(upper);
-        return upper.getId();
-    }
+    public Item saveItem(ItemRegisterForm form, Member salesman) {
+        switch (form.getDType()){
+            case "U":
+                Upper upper = Upper.createUpper(form.getName(), form.getPrice(), form.getStockQuantity(), salesman,
+                        form.getValue1(), form.getValue2(), form.getValue3());
+                return itemRepository.save(upper);
+            case "P":
+                Pants pants = Pants.createPants(form.getName(), form.getPrice(), form.getStockQuantity(), salesman,
+                        form.getValue1(), form.getValue2(), form.getValue3());
 
-    /**
-     * 상품 중 바지 저장 메서드
-     * @param pantsForm
-     * @param salesman
-     * @return
-     */
-    public Long savePants(PantsRegisterForm pantsForm, Member salesman) {
-        Pants pants = Pants.createPants(pantsForm.getName(), pantsForm.getPrice(), pantsForm.getStockQuantity(), salesman,
-                pantsForm.getTotalLength(), pantsForm.getWaist(), pantsForm.getThighWidth());
-        itemRepository.save(pants);
-        return pants.getId();
-    }
-
-    /**
-     * 상품 중 외투 저장 메서드
-     * @param outerForm
-     * @param salesman
-     * @return
-     */
-    public Long saveOuter(OuterRegisterForm outerForm, Member salesman) {
-        Outer outer = Outer.createOuter(outerForm.getName(), outerForm.getPrice(), outerForm.getStockQuantity(), salesman,
-                outerForm.getTotalLength(), outerForm.getWeight(), outerForm.getArmLength());
-        itemRepository.save(outer);
-        return outer.getId();
+                return itemRepository.save(pants);
+            case "O":
+                Outer outer = Outer.createOuter(form.getName(), form.getPrice(), form.getStockQuantity(), salesman,
+                        form.getValue1(), form.getValue2(), form.getValue3());
+                return itemRepository.save(outer);
+        }
+        return null;
     }
 
     /**
@@ -110,4 +95,17 @@ public class ItemService {
         }
     }
 
+    /**
+     * 상품 수량, 가격 변경 메서드
+     * @param itemId
+     * @param form
+     */
+    public void updateItem(Long itemId, ItemUpdateForm form) {
+
+        Optional<Item> oi = itemRepository.findById(itemId);
+        Item findItem = oi.orElseThrow(() -> new NoSuchItemException("존재하지 않는 아이템"));
+
+        findItem.changePrice(form.getPrice());
+        findItem.changeQuantity(form.getQuantity());
+    }
 }

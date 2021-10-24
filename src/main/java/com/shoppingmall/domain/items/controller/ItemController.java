@@ -1,24 +1,21 @@
 package com.shoppingmall.domain.items.controller;
 
-import com.shoppingmall.domain.enums.PaymentOption;
 import com.shoppingmall.domain.items.*;
 import com.shoppingmall.domain.items.dtos.ItemDto;
 import com.shoppingmall.domain.items.forms.ItemRegisterForm;
-import com.shoppingmall.domain.items.forms.OuterRegisterForm;
-import com.shoppingmall.domain.items.forms.PantsRegisterForm;
-import com.shoppingmall.domain.items.forms.UpperRegisterForm;
+import com.shoppingmall.domain.items.forms.ItemUpdateForm;
 import com.shoppingmall.domain.items.repository.ImageFileRepository;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.items.service.ItemService;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.members.dtos.MemberDto;
 import com.shoppingmall.domain.members.repository.MemberRepository;
-import com.shoppingmall.domain.orders.forms.OrderForm;
 import com.shoppingmall.domain.utils.FileStoreUtil;
+import com.shoppingmall.domain.valuetype.ItemType;
 import com.shoppingmall.exceptions.CannotSaleItemException;
 import com.shoppingmall.exceptions.NoSuchItemException;
-import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -30,12 +27,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Controller
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -72,15 +71,25 @@ public class ItemController {
     public String itemDetail(@PathVariable("id") Long id, Model model, HttpSession session) {
 
         // 상품 조회
-        Optional<Item> oi = itemRepository.findById(id);
+        Optional<Item> oi = itemRepository.findItemAndSalesmanById(id);
         Item item = oi.orElse(null);
         if (item == null) {
             throw new NoSuchItemException("존재하지 않는 상품입니다.");
         }
 
+        MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
+        if (loginMember != null) {
+            log.info("세션있음");
+            if (loginMember.getId() == item.getSalesman().getId()) {
+                log.info("세션의 멤버와 item을 등록한 멤버가 같음");
+                model.addAttribute("samePerson", true);
+            }
+        }
+
         // 상품 분류
         itemClassification(model, item);
 
+        // 상품 이미지파일들
         List<ImageFile> imageFiles = imageFileRepository.findImageFilesByItem(item);
         model.addAttribute("imageFiles", imageFiles);
 
@@ -100,89 +109,120 @@ public class ItemController {
     }
 
     /**
-     * 상품 등록 폼 화면으로 이동
-     * @param form
+     * 상품 종류 선택 페이지로 이동
      * @return
      */
-    @GetMapping("/add")
-    public String itemRegisterForm(@ModelAttribute("form") ItemRegisterForm form) {
-        return "item/item-register";
+    @GetMapping("/select-type")
+    public String itemTypeSelectPage(Model model){
+
+        List<ItemType> itemTypes = new ArrayList<>();
+        itemTypes.add(new ItemType("U", "상의"));
+        itemTypes.add(new ItemType("P", "바지"));
+        itemTypes.add(new ItemType("O", "외투"));
+        model.addAttribute("itemTypes", itemTypes);
+
+        return "item/select-type";
     }
 
     /**
-     * 상품 등록 첫번째 단계
-     * @param form
-     * @param bindingResult
+     * 상품 종류를 받아서 상품 등록 폼 페이지로
+     * @param itemType
      * @param model
      * @return
      */
+    @PostMapping("/select-type")
+    public String itemTypeSelectAndGoToRegisterForm(String itemType, Model model){
+
+        model.addAttribute("form", new ItemRegisterForm(itemType));
+
+        return "item/add-item-form";
+    }
+
+    /**
+     * 상품 등록 두번째 단계
+     * @param form
+     * @param bindingResult
+     * @return
+     */
     @PostMapping("/add")
-    public String itemTo(@Validated @ModelAttribute("form") ItemRegisterForm form, BindingResult bindingResult, Model model) {
+    public String itemRegister(@Validated @ModelAttribute("form") ItemRegisterForm form,
+                               BindingResult bindingResult, HttpSession session, RedirectAttributes ra) throws IOException {
 
         if (bindingResult.hasErrors()) {
-            return "item/item-register";
+            return "item/add-item-form";
         }
 
-        switch (form.getDType()) {
-            case "U":
-                model.addAttribute("u_form", new UpperRegisterForm());
-                return "item/upper-register";
-            case "P":
-                model.addAttribute("p_form", new PantsRegisterForm());
-                return "item/pants-register";
-            case "O":
-                model.addAttribute("o_form", new OuterRegisterForm());
-                return "item/outer-register";
+        MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
+
+        if (loginMember != null) {
+            Member salesman = memberRepository.findById(loginMember.getId()).get();
+            Item savedItem = saveItem(form, salesman);
+            List<ImageFile> imageFiles = fileStoreUtil.storeImageFiles(form.getImageFiles(), savedItem);
+            imageFiles.stream().forEach(image -> imageFileRepository.save(image));
+
+            ra.addAttribute("itemId", savedItem.getId());
+            return "redirect:/items/{itemId}"; // 바꿔 아이템 상세보기로
         }
-        return null;
+
+        return "redirect:/";
     }
 
     /**
-     * 상의 등록
-     * @param form
+     * 상품 수정 페이지
+     * @param itemId
+     * @param model
      * @return
      */
-    @PostMapping("/add/upper")
-    public String saveUpper(@ModelAttribute("form") UpperRegisterForm form) {
+    @GetMapping("/edit/{itemId}")
+    public String editPage(@PathVariable("itemId") Long itemId, Model model) {
 
-        Member salesman = getSalesman(form);
-        availableSale(salesman);
+        Optional<Item> oi = itemRepository.findById(itemId);
+        Item findItem = oi.orElseThrow(() -> new NoSuchItemException("존재하지 않는 아이템"));
 
-        itemService.saveUpper(form, salesman);
+        ItemUpdateForm form = new ItemUpdateForm(findItem.getName(), findItem.getPrice(), findItem.getStockQuantity());
+        model.addAttribute("form", form);
 
-        return "redirect: /items";
+        return "item/item-update";
     }
 
     /**
-     * 바지 등록
+     * 상품 수정
+     * @param itemId
      * @param form
+     * @param bindingResult
+     * @param ra
      * @return
      */
-    @PostMapping("/add/pants")
-    public String savePants(@ModelAttribute("form") PantsRegisterForm form) {
+    @PostMapping("/edit/{itemId}")
+    public String editPage(@PathVariable("itemId") Long itemId, @Validated @ModelAttribute("form") ItemUpdateForm form,
+                           BindingResult bindingResult, RedirectAttributes ra) {
 
-        Member salesman = getSalesman(form);
-        availableSale(salesman);
+        itemService.updateItem(itemId, form);
 
-        itemService.savePants(form, salesman);
+        ra.addAttribute("id", itemId);
+        return "redirect:/items/{id}";
+    }
 
-        return "redirect: /items";
+    @GetMapping("/sales/{memberId}")
+    public String itemsRegisteredByThisMember(@PathVariable("memberId") Member salesman, Model model,
+                                              @PageableDefault(size = 5, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<Item> page = itemRepository.findItems(salesman, pageable);
+        Page<ItemDto> dtoPage = page.map(ItemDto::new);
+        model.addAttribute("page", dtoPage);
+        return "item/item-list";
     }
 
     /**
-     * 외투 등록
+     * 상품 등록
      * @param form
      * @return
      */
-    @PostMapping("/add/outer")
-    public String saveOuter(@ModelAttribute("form") OuterRegisterForm form) {
+    private Item saveItem(ItemRegisterForm form, Member salesman) {
 
-        Member salesman = getSalesman(form);
         availableSale(salesman);
 
-        itemService.saveOuter(form, salesman);
-
-        return "redirect: /items";
+        return itemService.saveItem(form, salesman);
     }
 
     /**
@@ -211,17 +251,6 @@ public class ItemController {
         if(!salesman.getSaleAvailable()){
             throw new CannotSaleItemException("상품 판매 허가가 나지 않았습니다.");
         }
-    }
-
-    /**
-     * form에서 회원 정보를 꺼내 리턴
-     * @param form
-     * @return
-     */
-    private Member getSalesman(ItemRegisterForm form) {
-        Optional<Member> om = memberRepository.findById(form.getSalesmanId());
-        Member salesman = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원입니다."));
-        return salesman;
     }
 
 }

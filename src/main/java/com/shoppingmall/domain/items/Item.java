@@ -62,4 +62,20 @@ public abstract class Item extends BaseDateInfo {
     public void addStockQuantity(int cnt) {
         this.stockQuantity += cnt;
     }
+
+    /**
+     * 가격을 바꾼다
+     * @param price
+     */
+    public void changePrice(int price){
+        this.price = price;
+    }
+
+    /**
+     * 재고를 바꾼다
+     * @param stockQuantity
+     */
+    public void changeQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
 }

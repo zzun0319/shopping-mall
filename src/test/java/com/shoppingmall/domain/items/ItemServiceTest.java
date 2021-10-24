@@ -1,7 +1,7 @@
 package com.shoppingmall.domain.items;
 
 import com.shoppingmall.domain.enums.Grade;
-import com.shoppingmall.domain.items.forms.PantsRegisterForm;
+import com.shoppingmall.domain.items.forms.ItemRegisterForm;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.items.service.ItemService;
 import com.shoppingmall.domain.members.Member;
@@ -36,16 +36,15 @@ public class ItemServiceTest {
         Member salesman = new Member("s1", "ss111", "ssss1111@", Grade.USER, true);
         memberRepository.save(salesman);
 
-        PantsRegisterForm form = new PantsRegisterForm("jean1", 50000, 10, salesman.getId(), "U", 95, 28, 40);
+        ItemRegisterForm form = new ItemRegisterForm("jean1", 50000, 10, salesman.getId(), "U", 95, 28, 40);
 
         // when
-        Long itemId = itemService.savePants(form, salesman);
+        Item saveItem = itemService.saveItem(form, salesman);
 
         // then
-        Pants findItem = (Pants) itemRepository.findById(itemId).get();
+        Item findItem = itemRepository.findById(saveItem.getId()).get();
         assertThat(findItem.getName()).isEqualTo("jean1");
         assertThat(findItem.getPrice()).isEqualTo(50000);
-        assertThat(findItem.getTotalLength()).isEqualTo(95);
     }
 
     @Test

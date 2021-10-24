@@ -2,9 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>주문 목록</title>
 </head>
 <body>
-    hi
+    <div th:if="${orders.isEmpty()}">
+        주문 목록이 없습니다.
+    </div>
+    <div th:unless="${orders.isEmpty()}">
+        <table border="1">
+            <tr>
+                <td></td>
+                <td>주문 내역</td>
+                <td>주문 총 금액</td>
+                <td>주문 날짜</td>
+                <td>주문 상태</td>
+                <td>결제</td>
+                <td>배송</td>
+                <td>취소</td>
+            </tr>
+            <tr th:each="order : ${orders.getContent()}">
+                <td th:text="${orderStat.count}"></td>
+                <td th:if="${order.orderItems.size()} > 1" th:text="|${order.orderItems[0].itemName} 외 ${order.orderItems.size() - 1}개 상품|"></td>
+                <td th:if="${order.orderItems.size()} == 1" th:text="${order.orderItems[0].itemName}"></td>
+                <td th:text="${{order.totalOrderPrice}} + 원"></td>
+                <td th:text="${#temporals.format(order.orderDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
+                <td th:text="${order.orderStatus.desc}"></td>
+                <td th:text="${order.paymentStatus.desc}"></td>
+                <td th:text="${order.deliveryStatus.description}"></td>
+                <td>
+                    <form th:action="@{/orders/{orderId}/cancel(orderId=${order.orderId})}" method="post">
+                        <div th:if="|${order.deliveryStatus.description.equals('배송대기')}|">
+                            <button type="submit">주문 취소</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+    배송이 이미 시작된 주문을 취소하려면 000-0000-0000으로 연락하여 상담사와 통화하세요. <br>
+
+    <a th:href="@{/}">홈으로</a>
 </body>
 </html>

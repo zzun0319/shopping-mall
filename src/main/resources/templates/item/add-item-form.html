@@ -3,10 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <title>상품 등록</title>
+    <style>
+        .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+        }
+    </style>
 </head>
 <body>
+    <h2>상품 등록</h2>
+    <form th:object="${form}" th:action="@{/items/add}" method="post" enctype="multipart/form-data">
 
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()} th:text=${err}">글로벌 오류 메시지</p>
+        </div>
 
+<!--        <div>-->
+<!--            <label for="itemType" th:text="#{label.item.type}">Type</label>-->
+<!--            <input id="itemType" name="dType" th:value="${itemType}" th:errorclass="field-error" readonly>-->
+<!--            <div class="field-error" th:errors="*{dType}"></div>-->
+<!--        </div>-->
+        <input type="hidden" name="dType" th:value="${form.dType}">
+        <div>
+            <label for="name" th:text="#{label.item.name}">ID</label>
+            <input id="name" th:field="*{name}" th:errorclass="field-error" placeholder="상품명 입력">
+            <div class="field-error" th:errors="*{name}">
+                상품명은 필수입니다.
+            </div>
+        </div>
+        <div>
+            <label for="price" th:text="#{label.item.price}">PRICE</label>
+            <input id="price" th:field="*{price}" th:errorclass="field-error" placeholder="단품 가격 입력">
+            <div class="field-error" th:errors="*{price}">
+                가격은 필수입니다.
+            </div>
+        </div>
+        <div>
+            <label for="stockQuantity" th:text="#{label.item.stockQuantity}">STOCK</label>
+            <input id="stockQuantity" th:field="*{stockQuantity}" th:errorclass="field-error" placeholder="재고 입력">
+            <div class="field-error" th:errors="*{stockQuantity}">
+                재고는 필수입니다.
+            </div>
+        </div>
+        <div th:if="${form.dType == 'U'}">
+            <label for="u_value1">팔길이</label>
+            <input id="u_value1" th:field="*{value1}" th:errorclass="field-error" placeholder="팔길이 입력">
+            <div class="field-error" th:errors="*{value1}">
+                필수입니다.
+            </div>
+
+            <label for="u_value2">총장</label>
+            <input id="u_value2" th:field="*{value2}" th:errorclass="field-error" placeholder="총장 입력">
+            <div class="field-error" th:errors="*{value2}">
+                필수입니다.
+            </div>
+
+            <label for="u_value3">어깨너비</label>
+            <input id="u_value3" th:field="*{value3}" th:errorclass="field-error" placeholder="어깨너비 입력">
+            <div class="field-error" th:errors="*{value3}">
+                필수입니다.
+            </div>
+        </div>
+        <div th:if="${form.dType == 'P'}">
+            <label for="p_value1">총장</label>
+            <input id="p_value1" th:field="*{value1}" th:errorclass="field-error" placeholder="총장 입력">
+            <div class="field-error" th:errors="*{value1}">
+                필수입니다.
+            </div>
+
+            <label for="p_value2">허리</label>
+            <input id="p_value2" th:field="*{value2}" th:errorclass="field-error" placeholder="허리 입력">
+            <div class="field-error" th:errors="*{value2}">
+                필수입니다.
+            </div>
+
+            <label for="p_value3">허벅지</label>
+            <input id="p_value3" th:field="*{value3}" th:errorclass="field-error" placeholder="허벅지 입력">
+            <div class="field-error" th:errors="*{value3}">
+                필수입니다.
+            </div>
+        </div>
+        <div th:if="${form.dType == 'O'}">
+            <label for="o_value1">총장</label>
+            <input id="o_value1" th:field="*{value1}" th:errorclass="field-error" placeholder="총장 입력">
+            <div class="field-error" th:errors="*{value1}">
+                필수입니다.
+            </div>
+
+            <label for="o_value2">무게</label>
+            <input id="o_value2" th:field="*{value2}" th:errorclass="field-error" placeholder="무게 입력">
+            <div class="field-error" th:errors="*{value2}">
+                필수입니다.
+            </div>
+
+            <label for="o_value3">팔길이</label>
+            <input id="o_value3" th:field="*{value3}" th:errorclass="field-error" placeholder="팔길이 입력">
+            <div class="field-error" th:errors="*{value3}">
+                필수입니다.
+            </div>
+        </div>
+        <div>
+            이미지 파일 첨부(최대 5개): <input type="file" multiple="multiple" name="imageFiles">
+        </div>
+        <button type="submit">등록</button>
+    </form>
 
 </body>
 </html>

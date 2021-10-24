@@ -6,31 +6,37 @@
 </head>
 <body>
     <h2>상품 목록</h2>
-    <div>
-        <table border="1">
-            <tr>
-                <td></td>
-                <td>아이템 이름</td>
-                <td>가격(원)</td>
-                <td>재고</td>
-            </tr>
-            <tr th:each="item : ${page.getContent()}">
-                <td th:text="${itemStat.count}"></td>
-                <td><a th:href="@{/items/{id}(id=${item.id})}">[[${item.name}]]</a></td>
-                <td th:text="${{item.price}}"></td>
-                <td th:text="${{item.stockQuantity}}"></td>
-            </tr>
-        </table>
+    <div th:if="${page.isEmpty()}">
+        등록된 상품이 없습니다.
     </div>
-    <div>
-        <table border="1">
-            <tr>
-                <td th:if="${page.hasPrevious()}"><button type="button" th:onclick="|location.href='@{/items(page=${page.getNumber()-1})}'|">이전</button></td>
-<!--        <button th:each="num : ${#numbers.sequence(0,${last})}" th:value="${num+1}"></button>-->
+    <div th:else="${page.isEmpty()}">
+        <div>
+            <table border="1">
+                <tr>
+                    <td></td>
+                    <td>아이템 이름</td>
+                    <td>가격(원)</td>
+                    <td>재고</td>
+                </tr>
+                <tr th:each="item : ${page.getContent()}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td><a th:href="@{/items/{id}(id=${item.id})}">[[${item.name}]]</a></td>
+                    <td th:text="${{item.price}}"></td>
+                    <td th:text="${{item.stockQuantity}}"></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table border="1">
+                <tr>
+                    <td th:if="${page.hasPrevious()}"><button type="button" th:onclick="|location.href='@{/items(page=${page.getNumber()-1})}'|">이전</button></td>
+    <!--        <button th:each="num : ${#numbers.sequence(0,${last})}" th:value="${num+1}"></button>-->
 
-                <td th:if="${page.hasNext()}"><button type="button" th:onclick="|location.href='@{/items(page=${page.getNumber()+1})}'|">다음</button></td>
-            </tr>
-        </table>
+                    <td th:if="${page.hasNext()}"><button type="button" th:onclick="|location.href='@{/items(page=${page.getNumber()+1})}'|">다음</button></td>
+                </tr>
+            </table>
+        </div>
     </div>
+    <a th:href="@{/}">홈으로</a>
 </body>
 </html>

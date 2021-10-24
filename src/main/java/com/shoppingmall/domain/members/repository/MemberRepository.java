@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -35,8 +34,18 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      */
     List<Member> findBySaleAvailable(@Param("available") Boolean available);
 
+    /**
+     * 첨부파일이 있는 멤버만 조회
+     * @param pageable
+     * @return
+     */
     Page<Member> findMembersByFileNotNull(Pageable pageable);
 
+    /**
+     * id로 회원 조회. 첨부파일까지 한번에 가져오기
+     * @param id
+     * @return
+     */
     @EntityGraph(attributePaths = {"file"})
     Optional<Member> findMemberById(Long id);
 }

@@ -36,11 +36,11 @@ public class Order extends BaseDateInfo {
     @OneToMany(cascade = ALL, mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
@@ -71,7 +71,7 @@ public class Order extends BaseDateInfo {
      * @param orderItems 주문 상품들
      * @return 필드를 채운 주문 객체
      */
-    public static Order createOrder(Member member, Delivery delivery, Payment payment, OrderItem... orderItems){
+    public static Order createOrder(Member member, Delivery delivery, Payment payment, List<OrderItem> orderItems){
         Order order = new Order(member, delivery, payment);
         for (OrderItem orderItem : orderItems) {
             order.addOrderItem(orderItem);
@@ -84,24 +84,27 @@ public class Order extends BaseDateInfo {
      */
     public void cancelOrder() {
 
-        if(delivery.getStatus() == DeliveryStatus.COMPLETE){ // 이미 배송완료라면 주문 취소 불가
+        if(delivery.getStatus() != DeliveryStatus.BEFORE){ // 배송 시작 전에만 취소 가능
             throw new CannotCancelException("이미 배송완료된 상품은 취소가 불가능합니다.");
         } // 이런 예외들은 다 서비스로 빼야겠다
 
         delivery.cancelDelivery();
         status = OrderStatus.CANCEL;
-        for (OrderItem orderItem : orderItems) {
+        for (OrderItem orderItem : getOrderItems()) {
             orderItem.cancel();
         }
     }
 
-    public void pay(PaymentOption option) {
-        payment.pay(getTotalOrderPrice(), option);
-        delivery.startDelivery();
+    /**
+     * 주문 금액 결제 메서드
+     * @param option
+     */
+    public void pay(Integer paidPrice, PaymentOption option) {
+        payment.pay(paidPrice, option);
     }
 
     /**
-     * 각 주문 상품들의 개수 X 상품가격의 총합
+     * 주문 총금액 리턴해주는 메서드
      * @return
      */
     public int getTotalOrderPrice() {

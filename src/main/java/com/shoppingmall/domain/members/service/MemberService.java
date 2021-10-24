@@ -73,9 +73,8 @@ public class MemberService {
      * @return 바뀌었다면 바뀐 멤버의 id가 리턴된다.
      */
     @Transactional
-    public Long passwordChange(ChangePasswordForm form){
-        Optional<Member> om = memberRepository.findById(form.getId());
-        Member member = om.get();
+    public Long passwordChange(Member member, ChangePasswordForm form){
+
         member.changePassword(form.getNewPassword());
         return member.getId();
     }

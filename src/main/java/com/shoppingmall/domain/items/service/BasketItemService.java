@@ -16,7 +16,8 @@ public class BasketItemService {
     private final BasketItemRepository basketItemRepository;
 
     /**
-     * 모두 상태 업데이트
+     * 모든 장바구니에 담은 상품들 상태 업데이트
+     * 수정필요: 멤버별!
      */
     public void allUpdate() {
         List<BasketItem> basketItems = basketItemRepository.findAllWithItems();

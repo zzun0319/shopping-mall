@@ -17,6 +17,9 @@ import com.shoppingmall.exceptions.CannotCancelException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 public class OrderTest {
@@ -33,17 +36,22 @@ public class OrderTest {
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
         Outer jacket1 = Outer.createOuter("Jacket1", 100000, 10, salesMan, 100, 3, 45);
 
-        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, jean1.getPrice(), 1);
-        OrderItem orderItem2 = OrderItem.createOrderItem(upper, upper.getPrice(), 2);
-        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, jacket1.getPrice(), 1);
+        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, 1);
+        OrderItem orderItem2 = OrderItem.createOrderItem(upper, 2);
+        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, 1);
 
         Member customer = Member.createMember("memberB", "bbb111", "bbb1111@");
 
         Delivery delivery = new Delivery(new Address("city1", "street1", "1111"));
         Payment payment = new Payment();
 
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem1);
+        orderItems.add(orderItem2);
+        orderItems.add(orderItem3);
+
         // when
-        Order order = Order.createOrder(customer, delivery, payment, orderItem1, orderItem2, orderItem3);
+        Order order = Order.createOrder(customer, delivery, payment, orderItems);
 
         // then
         assertThat(order.getOrderItems().size()).isEqualTo(3);
@@ -63,19 +71,24 @@ public class OrderTest {
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
         Outer jacket1 = Outer.createOuter("Jacket1", 100000, 10, salesMan, 100, 3, 45);
 
-        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, jean1.getPrice(), 1);
-        OrderItem orderItem2 = OrderItem.createOrderItem(upper, upper.getPrice(), 2);
-        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, jacket1.getPrice(), 1);
+        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, 1);
+        OrderItem orderItem2 = OrderItem.createOrderItem(upper,  2);
+        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, 1);
 
         Member customer = Member.createMember("memberB", "bbb111", "bbb1111@");
 
         Delivery delivery = new Delivery(new Address("city1", "street1", "1111"));
         Payment payment = new Payment();
 
-        Order order = Order.createOrder(customer, delivery, payment, orderItem1, orderItem2, orderItem3);
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem1);
+        orderItems.add(orderItem2);
+        orderItems.add(orderItem3);
+
+        Order order = Order.createOrder(customer, delivery, payment, orderItems);
 
         // when
-        order.pay(PaymentOption.CREDIT_CARD);
+        order.pay(210000, PaymentOption.CREDIT_CARD);
 
         // then
         assertThat(order.getPayment().getPaidPrice()).isEqualTo(order.getTotalOrderPrice());
@@ -95,16 +108,21 @@ public class OrderTest {
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
         Outer jacket1 = Outer.createOuter("Jacket1", 100000, 10, salesMan, 100, 3, 45);
 
-        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, jean1.getPrice(), 1);
-        OrderItem orderItem2 = OrderItem.createOrderItem(upper, upper.getPrice(), 2);
-        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, jacket1.getPrice(), 1);
+        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, 1);
+        OrderItem orderItem2 = OrderItem.createOrderItem(upper, 2);
+        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, 1);
 
         Member customer = Member.createMember("memberB", "bbb111", "bbb1111@");
 
         Delivery delivery = new Delivery(new Address("city1", "street1", "1111"));
         Payment payment = new Payment();
 
-        Order order = Order.createOrder(customer, delivery, payment, orderItem1, orderItem2, orderItem3);
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem1);
+        orderItems.add(orderItem2);
+        orderItems.add(orderItem3);
+
+        Order order = Order.createOrder(customer, delivery, payment, orderItems);
 
         // when
         order.cancelOrder();
@@ -127,17 +145,23 @@ public class OrderTest {
         Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
         Outer jacket1 = Outer.createOuter("Jacket1", 100000, 10, salesMan, 100, 3, 45);
 
-        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, jean1.getPrice(), 1);
-        OrderItem orderItem2 = OrderItem.createOrderItem(upper, upper.getPrice(), 2);
-        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, jacket1.getPrice(), 1);
+        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, 1);
+        OrderItem orderItem2 = OrderItem.createOrderItem(upper, 2);
+        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, 1);
 
         Member customer = Member.createMember("memberB", "bbb111", "bbb1111@");
 
         Delivery delivery = new Delivery(new Address("city1", "street1", "1111"));
         Payment payment = new Payment();
 
-        Order order = Order.createOrder(customer, delivery, payment, orderItem1, orderItem2, orderItem3);
-        order.pay(PaymentOption.CREDIT_CARD);
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem1);
+        orderItems.add(orderItem2);
+        orderItems.add(orderItem3);
+
+        // when
+        Order order = Order.createOrder(customer, delivery, payment, orderItems);
+        order.pay(210000, PaymentOption.CREDIT_CARD);
 
         // when
         order.getDelivery().completeDelivery(); // 배송 완료됐을 때

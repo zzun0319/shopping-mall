@@ -30,18 +30,31 @@ public class Delivery extends BaseDateInfo {
         this.status = DeliveryStatus.BEFORE;
     }
 
+    /**
+     * 배송 시작
+     */
     public void startDelivery() {
         this.status = DeliveryStatus.ING;
     }
 
+    /**
+     * 배송 취소
+     */
     public void cancelDelivery() {
         this.status = DeliveryStatus.CANCEL;
     }
 
+    /**
+     * 배송 완료
+     */
     public void completeDelivery() {
         this.status = DeliveryStatus.COMPLETE;
     }
 
+    /**
+     * 배송지 변경
+     * @param address
+     */
     public void addressChange(Address address) {
         if(this.status != DeliveryStatus.BEFORE) { // 서비스로 넘겨 이거
             throw new CannotChangeAddressException("배송 시작 전에만 변경 가능합니다");

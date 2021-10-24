@@ -23,7 +23,7 @@ class OrderItemTest {
         Pants jean1 = Pants.createPants("Jean1", 50000, 3, member, 100, 28, 90);
 
         // when
-        OrderItem orderItem = OrderItem.createOrderItem(jean1, jean1.getPrice(), 2);
+        OrderItem orderItem = OrderItem.createOrderItem(jean1, 2);
 
         // then
         assertThat(jean1.getStockQuantity()).isEqualTo(1);
@@ -39,7 +39,7 @@ class OrderItemTest {
         member.permitSaleChange("abc1234", true);
 
         Upper shirt1 = Upper.createUpper("T-shirt1", 30000, 5, member, 32, 71, 58);
-        OrderItem orderItem = OrderItem.createOrderItem(shirt1, shirt1.getPrice(), 2);
+        OrderItem orderItem = OrderItem.createOrderItem(shirt1, 2);
 
         assertThat(shirt1.getStockQuantity()).isEqualTo(3);
 
