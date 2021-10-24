@@ -27,11 +27,12 @@
             </table>
         </div>
         <div>
+
+        </div>
+        <div>
             <table border="1">
                 <tr>
                     <td th:if="${page.hasPrevious()}"><button type="button" th:onclick="|location.href='@{/items(page=${page.getNumber()-1})}'|">이전</button></td>
-    <!--        <button th:each="num : ${#numbers.sequence(0,${last})}" th:value="${num+1}"></button>-->
-
                     <td th:if="${page.hasNext()}"><button type="button" th:onclick="|location.href='@{/items(page=${page.getNumber()+1})}'|">다음</button></td>
                 </tr>
             </table>

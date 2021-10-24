@@ -1,5 +1,15 @@
 package com.shoppingmall.domain.enums;
 
 public enum Grade {
-    USER, VIP, ADMIN
+    USER("일반회원"), VIP("VIP"), ADMIN("관리자");
+
+    private String desc;
+
+    Grade(String desc) {
+        this.desc = desc;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
 }

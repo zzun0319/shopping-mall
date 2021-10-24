@@ -12,13 +12,16 @@
         <button th:onclick="|location.href='@{/items/sales/{memberId}(memberId=${member.id})}'|">내가 등록한 상품 목록</button><br>
         <button th:onclick="|location.href='@{/items/type}'|">상품 등록</button>
     </div>
-    <div>
+    <div th:if="${member.grade.desc.equals('관리자')}">
+        <button th:onclick="|location.href='@{/members/permit}'|">판매 허가 대기 회원들</button>
+    </div>
+    <div th:unless="${member.grade.desc.equals('관리자')}">
         <button th:onclick="|location.href='@{/items}'|">상품 목록</button>
     </div>
-    <div>
+    <div th:unless="${member.grade.desc.equals('관리자')}">
         <button th:onclick="|location.href='@{/orders/basket/{id}(id=${member.id})}'|">장바구니</button>
     </div>
-    <div>
+    <div th:unless="${member.grade.desc.equals('관리자')}">
         <button th:onclick="|location.href='@{/orders/{memberId}(memberId=${member.id})}'|">주문조회</button>
     </div>
     <div>

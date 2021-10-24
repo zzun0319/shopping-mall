@@ -54,7 +54,7 @@ public class ItemController {
      * @return
      */
     @GetMapping
-    public String items(Model model, @PageableDefault(size = 5, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public String items(Model model, @PageableDefault(size = 5, page = 0, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Item> page = itemRepository.findAll(pageable);
         Page<ItemDto> dtoPage = page.map(ItemDto::new);
         model.addAttribute("page", dtoPage);
@@ -144,7 +144,7 @@ public class ItemController {
      * @param bindingResult
      * @return
      */
-    @PostMapping
+    @PostMapping("/add")
     public String itemRegister(@Validated @ModelAttribute("form") ItemRegisterForm form,
                                BindingResult bindingResult, HttpSession session, RedirectAttributes ra) throws IOException {
 
@@ -161,7 +161,7 @@ public class ItemController {
             imageFiles.stream().forEach(image -> imageFileRepository.save(image));
 
             ra.addAttribute("itemId", savedItem.getId());
-            return "redirect:/items/{itemId}"; // 바꿔 아이템 상세보기로
+            return "redirect:/items/{itemId}";
         }
 
         return "redirect:/";
@@ -203,6 +203,13 @@ public class ItemController {
         return "redirect:/items/{id}";
     }
 
+    /**
+     * 자신이 등록한 상품 보기
+     * @param salesman
+     * @param model
+     * @param pageable
+     * @return
+     */
     @GetMapping("/sales/{memberId}")
     public String itemsRegisteredByThisMember(@PathVariable("memberId") Member salesman, Model model,
                                               @PageableDefault(size = 5, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
