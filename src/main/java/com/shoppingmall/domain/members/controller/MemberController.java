@@ -55,7 +55,7 @@ public class MemberController {
     /**
      * 회원가입 페이지로 이동
      */
-    @GetMapping("/add")
+    @GetMapping
     public String joinForm(Model model){
         model.addAttribute("joinForm", new MemberJoinForm());
         return "member/join-form";
@@ -67,7 +67,7 @@ public class MemberController {
      * @param bindingResult
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping
     public String join(@Validated @ModelAttribute("joinForm") MemberJoinForm joinForm, BindingResult bindingResult) throws IOException {
 
         if(memberService.checkDuplicateId(joinForm.getLoginId())){

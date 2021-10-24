@@ -112,7 +112,7 @@ public class ItemController {
      * 상품 종류 선택 페이지로 이동
      * @return
      */
-    @GetMapping("/select-type")
+    @GetMapping("/type")
     public String itemTypeSelectPage(Model model){
 
         List<ItemType> itemTypes = new ArrayList<>();
@@ -130,7 +130,7 @@ public class ItemController {
      * @param model
      * @return
      */
-    @PostMapping("/select-type")
+    @PostMapping("/type")
     public String itemTypeSelectAndGoToRegisterForm(String itemType, Model model){
 
         model.addAttribute("form", new ItemRegisterForm(itemType));
@@ -144,7 +144,7 @@ public class ItemController {
      * @param bindingResult
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping
     public String itemRegister(@Validated @ModelAttribute("form") ItemRegisterForm form,
                                BindingResult bindingResult, HttpSession session, RedirectAttributes ra) throws IOException {
 

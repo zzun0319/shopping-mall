@@ -10,7 +10,7 @@
     </div>
     <div th:if="${member.saleAvailable}">
         <button th:onclick="|location.href='@{/items/sales/{memberId}(memberId=${member.id})}'|">내가 등록한 상품 목록</button><br>
-        <button th:onclick="|location.href='@{/items/select-type}'|">상품 등록</button>
+        <button th:onclick="|location.href='@{/items/type}'|">상품 등록</button>
     </div>
     <div>
         <button th:onclick="|location.href='@{/items}'|">상품 목록</button>
