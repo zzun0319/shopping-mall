@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.members;
 
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import com.shoppingmall.domain.members.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -61,7 +60,7 @@ class MemberRepositoryTest {
         List<Member> result = memberRepository.findByGrade(Grade.VIP);
 
         // then
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.size()).isEqualTo(4);
 
     }
 
@@ -81,7 +80,7 @@ class MemberRepositoryTest {
         List<Member> result = memberRepository.findBySaleAvailable(false);
 
         // then
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(4);
 
     }
 
@@ -112,7 +111,7 @@ class MemberRepositoryTest {
         for (Member member : members) {
             System.out.println("member = " + member.getName());
         }
-        assertThat(members.getTotalElements()).isEqualTo(2);
+        assertThat(members.getTotalElements()).isEqualTo(4);
     }
 
     @Test

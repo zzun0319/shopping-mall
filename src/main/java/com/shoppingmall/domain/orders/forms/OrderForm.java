@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.orders.forms;
 
-import com.shoppingmall.domain.enums.PaymentOption;
+import com.shoppingmall.enums.PaymentOption;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

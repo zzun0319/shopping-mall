@@ -1,6 +1,6 @@
 package com.shoppingmall;
 
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import com.shoppingmall.domain.items.ImageFile;
 import com.shoppingmall.domain.items.Outer;
 import com.shoppingmall.domain.items.Pants;

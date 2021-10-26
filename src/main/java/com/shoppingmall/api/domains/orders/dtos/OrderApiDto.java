@@ -1,33 +1,40 @@
-package com.shoppingmall.domain.orders.dtos;
+package com.shoppingmall.api.domains.orders.dtos;
 
 import com.shoppingmall.enums.DeliveryStatus;
 import com.shoppingmall.enums.OrderStatus;
 import com.shoppingmall.enums.PaymentStatus;
 import com.shoppingmall.domain.orders.Order;
+import com.shoppingmall.domain.orders.OrderItem;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
-public class OrderDto {
+public class OrderApiDto {
 
     private Long orderId;
     private LocalDateTime orderDate;
     private OrderStatus orderStatus;
     private PaymentStatus paymentStatus;
     private DeliveryStatus deliveryStatus;
-    private List<OrderItemDto> orderItems;
+    private String orderItems;
     private Integer totalOrderPrice;
 
-    public OrderDto(Order order) {
+    public OrderApiDto(Order order) {
         orderId = order.getId();
         orderDate = order.getCreatedDate();
         orderStatus = order.getStatus();
         paymentStatus = order.getPayment().getStatus();
         deliveryStatus = order.getDelivery().getStatus();
-        orderItems = order.getOrderItems().stream().map(OrderItemDto::new).collect(Collectors.toList());
+        List<OrderItem> orderItems = order.getOrderItems();
+        int left = orderItems.size() - 1;
+        String repItemName = orderItems.get(0).getItem().getName();
+        if(left == 0){
+            this.orderItems = repItemName;
+        } else {
+            this.orderItems = repItemName + "외 " + left + "개의 상품";
+        }
         totalOrderPrice = order.getTotalOrderPrice();
     }
 }

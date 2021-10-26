@@ -1,4 +1,4 @@
-package com.shoppingmall.domain.enums;
+package com.shoppingmall.enums;
 
 public enum DeliveryStatus {
 

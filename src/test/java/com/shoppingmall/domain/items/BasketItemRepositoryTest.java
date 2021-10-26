@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.items;
 
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import com.shoppingmall.domain.items.repository.BasketItemRepository;
 import com.shoppingmall.domain.items.repository.ItemRepository;
 import com.shoppingmall.domain.members.Member;

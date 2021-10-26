@@ -1,5 +1,7 @@
 package com.shoppingmall.domain.orders.repository;
 
+import com.shoppingmall.enums.DeliveryStatus;
+import com.shoppingmall.enums.PaymentStatus;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.orders.Order;
 import org.springframework.data.domain.Page;
@@ -25,9 +27,40 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = {"member", "payment", "delivery"})
     Page<Order> findOrdersDeliveryPaymentByMember(@Param("member") Member member, Pageable pageable);
 
+    /**
+     * 주문 번호로 주문 찾기 (결제 정보 함께 가져오기)
+     * @param orderId
+     * @return
+     */
     @Query("SELECT o FROM Order o JOIN FETCH o.payment WHERE o.id = :orderId")
     Optional<Order> findOrderWithPaymentByOrderId(@Param("orderId") Long orderId);
 
+    /**
+     * 주문 번호로 주문 찾기 (결제 정보, 배송 정보도 함께 가져오기)
+     * @param orderId
+     * @return
+     */
     @Query("SELECT o FROM Order o JOIN FETCH o.payment JOIN FETCH o.delivery WHERE o.id = :orderId")
     Optional<Order> findOrderWithPaymentAndDeliveryByOrderId(@Param("orderId") Long orderId);
+
+    /**
+     * 주문 번호로 주문 찾기 (배송 정보 함께 가져오기)
+     * @param orderId
+     * @return
+     */
+    @Query("SELECT o FROM Order o JOIN FETCH o.delivery WHERE o.id = :orderId")
+    Optional<Order> findOrderWithDeliveryByOrderId(@Param("orderId") Long orderId);
+
+    /**
+     * 결제 상태와 배송 상태로 주문 찾기
+     * @param d_status
+     * @param p_status
+     * @param pageable
+     * @return
+     */
+    @QueryHints(value = @QueryHint(name="org.hibernate.readOnly", value = "true"))
+    @EntityGraph(attributePaths = {"payment", "delivery"})
+    @Query("SELECT o FROM Order o WHERE o.delivery.status = :d_status AND o.payment.status = :p_status")
+    Page<Order> findOrdersWithDelAndPay(@Param("d_status") DeliveryStatus d_status,
+                                        @Param("p_status") PaymentStatus p_status, Pageable pageable);
 }

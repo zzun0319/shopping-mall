@@ -2,13 +2,12 @@ package com.shoppingmall.domain.members.service;
 
 import com.shoppingmall.domain.members.AttachedFile;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.dtos.PermitApiDto;
 import com.shoppingmall.domain.members.dtos.PermitDto;
 import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
 import com.shoppingmall.domain.members.forms.MemberLoginForm;
-import com.shoppingmall.domain.utils.FileStoreUtil;
+import com.shoppingmall.utils.FileStoreUtil;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,7 @@ public class MemberService {
         Member member = Member.createMember(form.getName(), form.getLoginId(), form.getPassword());
 
         // 첨부파일이 있으면 저장
-        if(!form.getSalesPermissionFile().isEmpty()){
+        if(form.getSalesPermissionFile() != null && !form.getSalesPermissionFile().isEmpty()){
             AttachedFile attachedFile = fileStoreUtil.storeAttachedFile(form.getSalesPermissionFile());
             member.setFile(attachedFile);
         }
@@ -90,13 +89,4 @@ public class MemberService {
         member.permitSaleChange("abc1234", permitDto.getSaleAvailable());
     }
 
-    /**
-     * API로 판매허가 바꾸기
-     * @param permitApiDto
-     */
-    public void changePermissionWithApi(PermitApiDto permitApiDto) {
-        Optional<Member> om = memberRepository.findByLoginId(permitApiDto.getLoginId());
-        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원"));
-        member.permitSaleChange(permitApiDto.getPermitPassword(), permitApiDto.getPermission());
-    }
 }

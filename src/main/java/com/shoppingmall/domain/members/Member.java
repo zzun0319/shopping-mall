@@ -1,7 +1,7 @@
 package com.shoppingmall.domain.members;
 
 import com.shoppingmall.domain.commons.BaseDateInfo;
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,18 +1,15 @@
 package com.shoppingmall.domain.orders;
 
 import com.shoppingmall.domain.delivery.Delivery;
-import com.shoppingmall.domain.enums.DeliveryStatus;
-import com.shoppingmall.domain.enums.OrderStatus;
-import com.shoppingmall.domain.enums.PaymentOption;
-import com.shoppingmall.domain.enums.PaymentStatus;
+import com.shoppingmall.enums.DeliveryStatus;
+import com.shoppingmall.enums.OrderStatus;
+import com.shoppingmall.enums.PaymentOption;
 import com.shoppingmall.domain.items.Outer;
 import com.shoppingmall.domain.items.Pants;
 import com.shoppingmall.domain.items.Upper;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.orders.Order;
-import com.shoppingmall.domain.orders.OrderItem;
 import com.shoppingmall.domain.payment.Payment;
-import com.shoppingmall.domain.valuetype.Address;
+import com.shoppingmall.valuetype.Address;
 import com.shoppingmall.exceptions.CannotCancelException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,43 +54,6 @@ public class OrderTest {
         assertThat(order.getOrderItems().size()).isEqualTo(3);
         assertThat(order.getTotalOrderPrice()).isEqualTo(210000);
         assertThat(order.getDelivery().getStatus()).isEqualTo(DeliveryStatus.BEFORE);
-    }
-
-    @Test
-    @DisplayName("주문 총액만큼 결제하면 지불완료 상태가 되면서 배송이 시작된다")
-    void totalPriceAndPay() throws Exception {
-
-        // given
-        Member salesMan = Member.createMember("memberA", "aaa1111", "aaa#1111");
-        salesMan.permitSaleChange("abc1234", true);
-
-        Pants jean1 = Pants.createPants("Jean1", 50000, 3, salesMan, 100, 28, 90);
-        Upper upper = Upper.createUpper("T-shirt1", 30000, 5, salesMan, 32, 71, 58);
-        Outer jacket1 = Outer.createOuter("Jacket1", 100000, 10, salesMan, 100, 3, 45);
-
-        OrderItem orderItem1 = OrderItem.createOrderItem(jean1, 1);
-        OrderItem orderItem2 = OrderItem.createOrderItem(upper,  2);
-        OrderItem orderItem3 = OrderItem.createOrderItem(jacket1, 1);
-
-        Member customer = Member.createMember("memberB", "bbb111", "bbb1111@");
-
-        Delivery delivery = new Delivery(new Address("city1", "street1", "1111"));
-        Payment payment = new Payment();
-
-        List<OrderItem> orderItems = new ArrayList<>();
-        orderItems.add(orderItem1);
-        orderItems.add(orderItem2);
-        orderItems.add(orderItem3);
-
-        Order order = Order.createOrder(customer, delivery, payment, orderItems);
-
-        // when
-        order.pay(210000, PaymentOption.CREDIT_CARD);
-
-        // then
-        assertThat(order.getPayment().getPaidPrice()).isEqualTo(order.getTotalOrderPrice());
-        assertThat(order.getDelivery().getStatus()).isEqualTo(DeliveryStatus.ING);
-        assertThat(order.getPayment().getStatus()).isEqualTo(PaymentStatus.COMPLETE);
     }
 
     @Test
@@ -164,7 +124,7 @@ public class OrderTest {
         order.pay(210000, PaymentOption.CREDIT_CARD);
 
         // when
-        order.getDelivery().completeDelivery(); // 배송 완료됐을 때
+        order.getDelivery().changeDelivery(DeliveryStatus.COMPLETE); // 배송 완료됐을 때
 
         // then
         org.junit.jupiter.api.Assertions.assertThrows(CannotCancelException.class, () -> order.cancelOrder());

@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.payment.controller;
 
-import com.shoppingmall.domain.enums.PaymentOption;
+import com.shoppingmall.enums.PaymentOption;
 import com.shoppingmall.domain.members.dtos.MemberDto;
 import com.shoppingmall.domain.orders.Order;
 import com.shoppingmall.domain.orders.repository.OrderRepository;

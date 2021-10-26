@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.members.repository;
 
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import com.shoppingmall.domain.members.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

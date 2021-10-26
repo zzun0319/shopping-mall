@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.members.dtos;
 
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import com.shoppingmall.domain.members.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

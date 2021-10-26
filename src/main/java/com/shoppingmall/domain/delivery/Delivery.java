@@ -1,8 +1,8 @@
 package com.shoppingmall.domain.delivery;
 
 import com.shoppingmall.domain.commons.BaseDateInfo;
-import com.shoppingmall.domain.enums.DeliveryStatus;
-import com.shoppingmall.domain.valuetype.Address;
+import com.shoppingmall.enums.DeliveryStatus;
+import com.shoppingmall.valuetype.Address;
 import com.shoppingmall.exceptions.CannotChangeAddressException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,24 +31,10 @@ public class Delivery extends BaseDateInfo {
     }
 
     /**
-     * 배송 시작
+     * 배송 상태 변경
      */
-    public void startDelivery() {
-        this.status = DeliveryStatus.ING;
-    }
-
-    /**
-     * 배송 취소
-     */
-    public void cancelDelivery() {
-        this.status = DeliveryStatus.CANCEL;
-    }
-
-    /**
-     * 배송 완료
-     */
-    public void completeDelivery() {
-        this.status = DeliveryStatus.COMPLETE;
+    public void changeDelivery(DeliveryStatus status) {
+        this.status = status;
     }
 
     /**

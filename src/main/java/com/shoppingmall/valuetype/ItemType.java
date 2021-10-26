@@ -1,4 +1,4 @@
-package com.shoppingmall.domain.valuetype;
+package com.shoppingmall.valuetype;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,7 @@
 package com.shoppingmall.domain.orders.service;
 
 import com.shoppingmall.domain.delivery.Delivery;
+import com.shoppingmall.enums.DeliveryStatus;
 import com.shoppingmall.domain.items.BasketItem;
 import com.shoppingmall.domain.items.Item;
 import com.shoppingmall.domain.items.repository.BasketItemRepository;
@@ -11,15 +12,12 @@ import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.orders.Order;
 import com.shoppingmall.domain.orders.OrderItem;
 import com.shoppingmall.domain.orders.forms.AddressForm;
-import com.shoppingmall.domain.orders.forms.OrderForm;
 import com.shoppingmall.domain.orders.repository.OrderRepository;
 import com.shoppingmall.domain.payment.Payment;
 import com.shoppingmall.domain.payment.forms.PayForm;
-import com.shoppingmall.domain.valuetype.Address;
-import com.shoppingmall.exceptions.NoSuchItemException;
+import com.shoppingmall.valuetype.Address;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,6 +95,11 @@ public class OrderService {
         basketItemRepository.deleteByIds(basketItemIds);
     }
 
+    /**
+     * 결제 상태 변경
+     * @param orderId
+     * @param form
+     */
     public void updatePayment(Long orderId, PayForm form) {
 
         Optional<Order> oo = orderRepository.findOrderWithPaymentByOrderId(orderId);
@@ -104,6 +107,10 @@ public class OrderService {
         order.pay(form.getPaidPrice(), form.getOption());
     }
 
+    /**
+     * 주문 취소
+     * @param orderId
+     */
     public void cancelOrder(Long orderId) {
 
         Optional<Order> oo = orderRepository.findOrderWithPaymentAndDeliveryByOrderId(orderId);
@@ -111,4 +118,16 @@ public class OrderService {
         order.cancelOrder();
     }
 
+    /**
+     * 배송 상태 변경
+     * @param order
+     * @param deliveryStatus
+     */
+    public void changeDeliveryStatus(Order order, String deliveryStatus) throws IllegalArgumentException {
+
+        DeliveryStatus status = DeliveryStatus.valueOf(deliveryStatus);
+
+        order.getDelivery().changeDelivery(status);
+
+    }
 }

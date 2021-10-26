@@ -1,10 +1,8 @@
 package com.shoppingmall.domain.delivery;
 
-import com.shoppingmall.domain.delivery.Delivery;
-import com.shoppingmall.domain.enums.DeliveryStatus;
-import com.shoppingmall.domain.valuetype.Address;
+import com.shoppingmall.enums.DeliveryStatus;
+import com.shoppingmall.valuetype.Address;
 import com.shoppingmall.exceptions.CannotChangeAddressException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +33,7 @@ class DeliveryTest {
         Delivery delivery = new Delivery(new Address("city1", "street1", "11111"));
 
         // when
-        delivery.completeDelivery();
+        delivery.changeDelivery(DeliveryStatus.COMPLETE);
 
         // then
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.COMPLETE);

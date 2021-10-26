@@ -72,7 +72,7 @@ public class ItemRepositoryTest {
         Page<Item> page = itemRepository.findByPriceLessThanEqual(30000, pageRequest);
 
         // then
-        assertThat(page.getContent().size()).isEqualTo(2);
+        assertThat(page.getContent().size()).isEqualTo(3);
 //        for (Item item : page) {
 //            System.out.println("item = " + item.getName());
 //        }

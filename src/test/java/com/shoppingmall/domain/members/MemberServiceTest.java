@@ -1,6 +1,6 @@
 package com.shoppingmall.domain.members;
 
-import com.shoppingmall.domain.enums.Grade;
+import com.shoppingmall.enums.Grade;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
 import com.shoppingmall.domain.members.repository.MemberRepository;

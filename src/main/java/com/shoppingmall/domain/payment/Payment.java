@@ -1,11 +1,9 @@
 package com.shoppingmall.domain.payment;
 
 import com.shoppingmall.domain.commons.BaseDateInfo;
-import com.shoppingmall.domain.enums.PaymentOption;
-import com.shoppingmall.domain.enums.PaymentStatus;
-import lombok.AccessLevel;
+import com.shoppingmall.enums.PaymentOption;
+import com.shoppingmall.enums.PaymentStatus;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 

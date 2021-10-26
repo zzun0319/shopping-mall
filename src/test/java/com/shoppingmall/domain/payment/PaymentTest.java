@@ -1,12 +1,10 @@
 package com.shoppingmall.domain.payment;
 
-import com.shoppingmall.domain.enums.PaymentOption;
-import com.shoppingmall.domain.enums.PaymentStatus;
+import com.shoppingmall.enums.PaymentOption;
+import com.shoppingmall.enums.PaymentStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PaymentTest {
 

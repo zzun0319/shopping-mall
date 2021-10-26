@@ -1,4 +1,4 @@
-package com.shoppingmall.domain.utils;
+package com.shoppingmall.utils;
 
 import com.shoppingmall.domain.items.ImageFile;
 import com.shoppingmall.domain.items.Item;

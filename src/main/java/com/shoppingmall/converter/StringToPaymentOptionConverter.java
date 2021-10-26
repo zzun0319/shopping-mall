@@ -1,6 +1,6 @@
 package com.shoppingmall.converter;
 
-import com.shoppingmall.domain.enums.PaymentOption;
+import com.shoppingmall.enums.PaymentOption;
 import org.springframework.core.convert.converter.Converter;
 
 public class StringToPaymentOptionConverter implements Converter<String, PaymentOption> {

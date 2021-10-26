@@ -2,7 +2,6 @@ package com.shoppingmall.domain.members.controller;
 
 import com.shoppingmall.domain.members.AttachedFile;
 import com.shoppingmall.domain.members.Member;
-import com.shoppingmall.domain.members.dtos.PermitApiDto;
 import com.shoppingmall.domain.members.dtos.PermitDto;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.repository.AttachedFileRepository;
@@ -11,7 +10,7 @@ import com.shoppingmall.domain.members.service.MemberService;
 import com.shoppingmall.domain.members.dtos.MemberDto;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
 import com.shoppingmall.domain.members.forms.MemberLoginForm;
-import com.shoppingmall.domain.utils.FileStoreUtil;
+import com.shoppingmall.utils.FileStoreUtil;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +33,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Controller
@@ -140,7 +136,6 @@ public class MemberController {
         return "redirect:/";
     }
 
-
     /**
      * 판매 허가를 위해 파일을 첨부한 사람들의 리스트 보기
      * @param model
@@ -183,18 +178,6 @@ public class MemberController {
     }
 
     /**
-     * api로 승인 메서드
-     * 일단 만들어두고 api 구현시 옮기기
-     * @return
-     */
-    @ResponseBody
-    @PatchMapping("/permit")
-    public String permitApi(@RequestBody PermitApiDto permitApiDto) {
-        memberService.changePermissionWithApi(permitApiDto);
-        return "Permission Change Success"; // 이 부분도 Swagger 써서 여러 다음 행동 진행 가능하도록 바꾸기
-    }
-
-    /**
      * 첨부 파일 다운로드
      * @param id
      * @return
@@ -219,12 +202,25 @@ public class MemberController {
                 .body(resource);
     }
 
+    /**
+     * 비밀번호 변경 페이지
+     * @param memberId
+     * @param model
+     * @return
+     */
     @GetMapping("/update/{memberId}")
     public String updatePasswordPage(@PathVariable("memberId") Long memberId, Model model){
         model.addAttribute("form", new ChangePasswordForm());
         return "member/password-change-form";
     }
 
+    /**
+     * 비밀번호 변경
+     * @param member
+     * @param form
+     * @param bindingResult
+     * @return
+     */
     @PostMapping("/update/{memberId}")
     public String passwordUpdate(@PathVariable("memberId") Member member, @Validated @ModelAttribute("form") ChangePasswordForm form, BindingResult bindingResult) {
 
