@@ -69,20 +69,21 @@ public class OrderController {
      * 장바구니 담기
      * @param itemId
      * @param qty
-     * @param session
+     * @param loginMember
      * @param ra
      * @return
      */
     @PostMapping("/basket/{itemId}")
-    public String putBasket(@PathVariable Long itemId, int qty, HttpSession session, RedirectAttributes ra){
+    public String putBasket(@PathVariable Long itemId, int qty, @SessionAttribute(name = "loginMember", required = false) MemberDto loginMember, RedirectAttributes ra){
         Optional<Item> oi = itemRepository.findById(itemId);
         Item item = oi.orElseThrow(() -> new NoSuchItemException("존재하지 않는 상품"));
         if(item.getStockQuantity() < qty){
             throw new CannotChangeAddressException("재고보다 많은 상품을 주문했습니다.");
         }
 
-        MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
-        ra.addAttribute("id", loginMember.getId());
+        if (loginMember != null) {
+            ra.addAttribute("id", loginMember.getId());
+        }
 
         orderService.putInTheBasket(item, loginMember, qty);
 
@@ -115,17 +116,16 @@ public class OrderController {
      */
     @PostMapping
     public String order(@Validated @ModelAttribute("form") AddressForm form, BindingResult bindingResult,
-                        HttpServletRequest request, HttpSession session, RedirectAttributes ra, Model model){
+                        HttpServletRequest request, @SessionAttribute(name = "loginMember", required = false) MemberDto loginMember, RedirectAttributes ra, Model model){
 
-        MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
         String[] selectedNumberString = request.getParameterValues("select");
 
-        if(bindingResult.hasErrors()){
+        if(loginMember != null && bindingResult.hasErrors()){
             validate(model, loginMember);
             return "order/basket";
         }
 
-        if(selectedNumberString == null){
+        if(loginMember != null && selectedNumberString == null){
             validate(model, loginMember);
             model.addAttribute("msg", "주문할 상품을 선택해주세요.");
             return "order/basket";
@@ -134,7 +134,10 @@ public class OrderController {
         List<Long> BasketItemIds = Arrays.stream(selectedNumberString).map(s -> Long.parseLong(s)).collect(Collectors.toList());
 
         
-        Long orderId = orderService.order(loginMember.getId(), BasketItemIds, form);
+        Long orderId = null;
+        if (loginMember != null) {
+            orderId = orderService.order(loginMember.getId(), BasketItemIds, form);
+        }
         ra.addAttribute("orderId", orderId);
         
         // 주문이 이미 들어간 상태이므로 장바구니에서는 삭제
@@ -165,7 +168,9 @@ public class OrderController {
      */
     private void AddRedirectAttributeMemberId(HttpSession session, RedirectAttributes ra) {
         MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
-        ra.addAttribute("memberId", loginMember.getId());
+        if(loginMember != null){
+            ra.addAttribute("memberId", loginMember.getId());
+        }
     }
 
     /**

@@ -84,8 +84,6 @@ public class Member extends BaseDateInfo {
         }
     }
     
-    //TODO: 회원 등급 변경 메서드
-
     /**
      * 이름 변경 메서드
      * @param name
@@ -108,4 +106,5 @@ public class Member extends BaseDateInfo {
         this.file = file;
     }
 
+    //TODO: 회원 등급 변경 메서드
 }

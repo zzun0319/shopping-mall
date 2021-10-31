@@ -1,10 +1,11 @@
 package com.shoppingmall.domain.orders;
 
+import com.shoppingmall.domain.commons.BaseDateAndByWhomInfo;
+import com.shoppingmall.domain.commons.BaseDateInfo;
 import com.shoppingmall.domain.delivery.Delivery;
 import com.shoppingmall.enums.PaymentOption;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.payment.Payment;
-import com.shoppingmall.domain.commons.BaseDateInfo;
 import com.shoppingmall.enums.DeliveryStatus;
 import com.shoppingmall.enums.OrderStatus;
 import com.shoppingmall.exceptions.CannotCancelException;
@@ -86,7 +87,7 @@ public class Order extends BaseDateInfo {
 
         if(delivery.getStatus() != DeliveryStatus.BEFORE){ // 배송 시작 전에만 취소 가능
             throw new CannotCancelException("이미 배송완료된 상품은 취소가 불가능합니다.");
-        } // 이런 예외들은 다 서비스로 빼야겠다
+        }
 
         delivery.changeDelivery(DeliveryStatus.CANCEL);
         status = OrderStatus.CANCEL;

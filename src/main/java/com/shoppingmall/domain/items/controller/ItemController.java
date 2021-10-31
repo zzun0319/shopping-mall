@@ -79,7 +79,6 @@ public class ItemController {
 
         MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
         if (loginMember != null) {
-            log.info("세션있음");
             if (loginMember.getId() == item.getSalesman().getId()) {
                 log.info("세션의 멤버와 item을 등록한 멤버가 같음");
                 model.addAttribute("samePerson", true);
@@ -146,13 +145,11 @@ public class ItemController {
      */
     @PostMapping("/add")
     public String itemRegister(@Validated @ModelAttribute("form") ItemRegisterForm form,
-                               BindingResult bindingResult, HttpSession session, RedirectAttributes ra) throws IOException {
+                               BindingResult bindingResult, @SessionAttribute(name = "loginMember", required = false) MemberDto loginMember, RedirectAttributes ra) throws IOException {
 
         if (bindingResult.hasErrors()) {
             return "item/add-item-form";
         }
-
-        MemberDto loginMember = (MemberDto) session.getAttribute("loginMember");
 
         if (loginMember != null) {
             Member salesman = memberRepository.findById(loginMember.getId()).get();

@@ -1,20 +1,28 @@
 package com.shoppingmall.api.domains.member.controller;
 
 import com.shoppingmall.api.domains.member.dtos.MemberResponse;
+import com.shoppingmall.api.domains.member.dtos.MemberResponseByLoginId;
+import com.shoppingmall.api.domains.member.dtos.RequestJoin;
 import com.shoppingmall.api.exceptions.ExceptionResponse;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
-import com.shoppingmall.domain.members.forms.MemberJoinForm;
+import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.members.service.MemberService;
+import com.shoppingmall.enums.Grade;
+import com.shoppingmall.exceptions.NoSuchMemberException;
+import com.shoppingmall.exceptions.WrongStatusException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/members")
@@ -22,22 +30,23 @@ import java.time.LocalDateTime;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     /**
      * API로 회원가입
-     * @param form
+     * @param requestJoin
      * @return
      */
     @PostMapping
-    public ResponseEntity join(@Validated @ModelAttribute MemberJoinForm form) throws IOException {
+    public ResponseEntity join(@Validated @RequestBody RequestJoin requestJoin){
 
-        if(memberService.checkDuplicateId(form.getLoginId())){
+        if(memberService.checkDuplicateId(requestJoin.getLoginId())){
             ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), "아이디 중복", "다른 아이디를 입력해주세요");
             return ResponseEntity.badRequest().body(er);
         }
 
         // 가입 성공
-        Long savedMemberId = memberService.join(form);
+        Long savedMemberId = memberService.joinApi(requestJoin);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedMemberId).toUri();
 
@@ -81,6 +90,69 @@ public class MemberApiController {
         return ResponseEntity.ok().body("변경 성공");
     }
 
+    /**
+     * 회원탈퇴
+     * @param member
+     * @param currentPassword
+     * @return
+     */
+    @DeleteMapping("/{id}")
+    public String deleteMember(@PathVariable("id") Member member, @RequestBody String currentPassword) {
+
+
+        try {
+            memberService.deleteMember(member, currentPassword);
+        } catch(Exception e) {
+            throw new WrongStatusException("비밀번호가 일치하지 않습니다");
+        }
+
+        return "회원 탈퇴가 정상처리되었습니다.";
+    }
+
+    /**
+     * 로그인 아이디로 회원 1명 조회
+     * @param loginId
+     * @return
+     */
+    @GetMapping("/loginId/{loginId}")
+    public ResponseEntity oneMemberByLoginId(@PathVariable("loginId") String loginId) {
+        Optional<Member> om = memberRepository.findByLoginId(loginId);
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 LoginId입니다."));
+        MemberResponseByLoginId memberDto = new MemberResponseByLoginId(member);
+        return ResponseEntity.ok().body(memberDto);
+    }
+
+    /**
+     * 회원 등급으로 조회
+     * @param grade
+     * @return
+     */
+    @GetMapping("/grade/{grade}")
+    public ResponseEntity MembersByGrade(@PathVariable("grade") String grade) {
+
+        Grade enumGrade = null;
+
+        try {
+            enumGrade = Grade.valueOf(grade);
+        } catch (IllegalArgumentException iae) {
+            throw new WrongStatusException("GRADE는 USER, ADMIN, VIP 세 종류가 있습니다. 대소문자를 구별합니다");
+        }
+
+        List<Member> list = memberRepository.findByGrade(enumGrade);
+        List<MemberResponse> collect = list.stream().map(MemberResponse::new).collect(Collectors.toList());
+        return new ResponseEntity(collect, HttpStatus.OK);
+    }
+
+    /**
+     * 판매 가능한 회원 조회
+     * @return
+     */
+    @GetMapping("/salesAvailable")
+    public ResponseEntity MembersBySales(){
+        List<Member> members = memberRepository.findBySaleAvailable(true);
+        List<MemberResponse> memberDtos = members.stream().map(MemberResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(memberDtos);
+    }
 
 
     // TODO 로그인 - 토큰.. JWT.. spring security 써야겠는데..

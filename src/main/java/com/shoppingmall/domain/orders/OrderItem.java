@@ -29,6 +29,12 @@ public class OrderItem {
     private Integer totalPrice; // 주문 가격 = 주문 수량 * 상품 가겨
     private Integer orderQuantity; // 주문 수량
 
+    private OrderItem(Item item, Integer totalPrice, Integer orderQuantity) {
+        this.item = item;
+        this.totalPrice = totalPrice;
+        this.orderQuantity = orderQuantity;
+    }
+
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -40,11 +46,7 @@ public class OrderItem {
      * @return 필드를 채운 orderItem 객체
      */
     public static OrderItem createOrderItem(Item item, int orderQuantity) { // item에 price가 있지만, 쿠폰 할인 같은 게 적용된 가격이 들어오도록
-        OrderItem orderItem = new OrderItem();
-        orderItem.item = item;
-        orderItem.totalPrice = item.getPrice() * orderQuantity;
-        orderItem.orderQuantity = orderQuantity;
-
+        OrderItem orderItem = new OrderItem(item, item.getPrice() * orderQuantity, orderQuantity);
         item.reduceStockQuantity(orderQuantity);
         return orderItem;
     }

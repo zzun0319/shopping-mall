@@ -1,11 +1,13 @@
 package com.shoppingmall.api.exceptions;
 
 import com.shoppingmall.exceptions.NoOrderExistException;
+import com.shoppingmall.exceptions.NoSuchMemberException;
 import com.shoppingmall.exceptions.WrongDeliveryStatusException;
 import com.shoppingmall.exceptions.WrongStatusException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,6 +44,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity(er, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoSuchMemberException.class)
+    public ResponseEntity<ExceptionResponse> handleNoSuchMemberException(Exception ex, WebRequest request){
+        ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(er, HttpStatus.NOT_FOUND);
+    }
+
     /**
      * validation 실패시
      * @param ex
@@ -54,6 +62,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), ex.getBindingResult().getFieldError().getDefaultMessage(), ex.getBindingResult().toString());
-        return ResponseEntity.badRequest().body(er);
+        return new ResponseEntity(er, HttpStatus.BAD_REQUEST);
     }
+
 }

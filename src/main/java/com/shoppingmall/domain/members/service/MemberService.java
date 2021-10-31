@@ -1,5 +1,6 @@
 package com.shoppingmall.domain.members.service;
 
+import com.shoppingmall.api.domains.member.dtos.RequestJoin;
 import com.shoppingmall.domain.members.AttachedFile;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.members.dtos.PermitDto;
@@ -89,4 +90,22 @@ public class MemberService {
         member.permitSaleChange("abc1234", permitDto.getSaleAvailable());
     }
 
+    public void deleteMember(Member member, String currentPassword) throws Exception {
+
+        if(!member.getPassword().equals(currentPassword)){
+            throw new Exception();
+        }
+
+        memberRepository.delete(member);
+
+    }
+
+    public Long joinApi(RequestJoin requestJoin) {
+
+        Member member = Member.createMember(requestJoin.getName(), requestJoin.getLoginId(), requestJoin.getPassword());
+
+        Member savedMember = memberRepository.save(member);
+        return savedMember.getId();
+
+    }
 }

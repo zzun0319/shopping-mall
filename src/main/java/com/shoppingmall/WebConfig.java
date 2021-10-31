@@ -7,10 +7,15 @@ import com.shoppingmall.interceptors.AdminCheckInterceptor;
 import com.shoppingmall.interceptors.LogInterceptor;
 import com.shoppingmall.interceptors.LoginCheckInterceptor;
 import com.shoppingmall.interceptors.SalesAvailableCheckInterceptor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -43,5 +48,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(4)
                 .addPathPatterns("/members/permit/**")
                 .excludePathPatterns("/css/**", "/*.ico", "/error");
+    }
+
+    @Bean
+    public AuditorAware<String> auditorProvider() {
+
+        return new AuditorAware<String>() {
+            @Override
+            public Optional<String> getCurrentAuditor() {
+                return Optional.of(UUID.randomUUID().toString());
+            }
+        };
     }
 }
