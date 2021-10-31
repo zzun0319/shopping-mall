@@ -37,7 +37,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/members", "/members/login", "/members/logout", "/css/**", "/*.ico", "/error", "/api/**");
+                .excludePathPatterns("/", "/members", "/members/login", "/members/logout", "/css/**", "/*.ico", "/error");
 
         registry.addInterceptor(new SalesAvailableCheckInterceptor())
                 .order(3)
@@ -46,7 +46,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new AdminCheckInterceptor())
                 .order(4)
-                .addPathPatterns("/members/permit/**")
+                .addPathPatterns("/api/**", "/members/permit/**", "/swagger-ui/index.html", "/v2/api-docs")
                 .excludePathPatterns("/css/**", "/*.ico", "/error");
     }
 

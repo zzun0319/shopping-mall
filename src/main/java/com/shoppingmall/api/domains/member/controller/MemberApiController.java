@@ -12,6 +12,13 @@ import com.shoppingmall.enums.Grade;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import com.shoppingmall.exceptions.WrongStatusException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,9 +27,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/api/members")
@@ -31,6 +41,33 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+
+    /**
+     * 전체 회원 조회. HATEOAS 적용
+     * @param pageable
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity<CollectionModel<EntityModel<MemberResponse>>> allMembers(
+            @PageableDefault(size = 2) Pageable pageable) {
+
+        List<EntityModel<MemberResponse>> list = new ArrayList<>();
+
+        Page<Member> all = memberRepository.findAll(pageable);
+        Page<MemberResponse> dtoMap = all.map(MemberResponse::new);
+        for (MemberResponse memberResponse : dtoMap) {
+            EntityModel<MemberResponse> entityModel = EntityModel.of(memberResponse);
+            WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).oneMemberByLoginId(memberResponse.getLoginId()));
+            entityModel.add(linkTo.withRel("this-member (GET)"));
+            list.add(entityModel);
+        }
+
+        // 현재 요청 URI
+        WebMvcLinkBuilder self
+                = linkTo(methodOn(this.getClass()).allMembers(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())));
+
+        return ResponseEntity.ok(CollectionModel.of(list, self.withSelfRel()));
+    }
 
     /**
      * API로 회원가입
@@ -110,7 +147,7 @@ public class MemberApiController {
     }
 
     /**
-     * 로그인 아이디로 회원 1명 조회
+     * 로그인 아이디로 회원 1명 조회, HATEOAS 적용
      * @param loginId
      * @return
      */
@@ -119,7 +156,16 @@ public class MemberApiController {
         Optional<Member> om = memberRepository.findByLoginId(loginId);
         Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 LoginId입니다."));
         MemberResponseByLoginId memberDto = new MemberResponseByLoginId(member);
-        return ResponseEntity.ok().body(memberDto);
+
+        EntityModel<MemberResponseByLoginId> entityModel = EntityModel.of(memberDto);
+
+        WebMvcLinkBuilder linkForAllMembers = linkTo(methodOn(this.getClass()).allMembers(PageRequest.of(0, 2)));
+        entityModel.add(linkForAllMembers.withRel("All-Members (GET)"));
+
+        WebMvcLinkBuilder linkForPwdUpdate = linkTo(methodOn(this.getClass()).passwordUpdate(member, new ChangePasswordForm()));
+        entityModel.add(linkForPwdUpdate.withRel("PWD-CHANGE (PATCH)"));
+
+        return ResponseEntity.ok().body(entityModel);
     }
 
     /**

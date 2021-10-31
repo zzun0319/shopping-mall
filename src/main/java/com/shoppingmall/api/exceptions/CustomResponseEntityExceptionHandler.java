@@ -50,6 +50,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity(er, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleAllException(Exception ex, WebRequest request){
+        ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(er, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     /**
      * validation 실패시
      * @param ex
