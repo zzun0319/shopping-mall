@@ -1,20 +1,13 @@
 package com.shoppingmall.exceptions;
 
-public class NoSuchOrderException extends IllegalStateException{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public NoSuchOrderException() {
-        super();
-    }
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NoSuchOrderException extends RuntimeException {
 
     public NoSuchOrderException(String s) {
         super(s);
     }
 
-    public NoSuchOrderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NoSuchOrderException(Throwable cause) {
-        super(cause);
-    }
 }

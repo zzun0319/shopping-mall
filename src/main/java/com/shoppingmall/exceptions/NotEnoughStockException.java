@@ -1,20 +1,13 @@
 package com.shoppingmall.exceptions;
 
-public class NotEnoughStockException extends IllegalStateException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public NotEnoughStockException() {
-        super();
-    }
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class NotEnoughStockException extends RuntimeException {
 
     public NotEnoughStockException(String s) {
         super(s);
     }
 
-    public NotEnoughStockException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NotEnoughStockException(Throwable cause) {
-        super(cause);
-    }
 }

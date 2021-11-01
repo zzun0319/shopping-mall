@@ -1,20 +1,13 @@
 package com.shoppingmall.exceptions;
 
-public class NotHaveRightToChangeException extends IllegalStateException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public NotHaveRightToChangeException() {
-        super();
-    }
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class NotHaveRightToChangeException extends RuntimeException {
 
     public NotHaveRightToChangeException(String s) {
         super(s);
     }
 
-    public NotHaveRightToChangeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NotHaveRightToChangeException(Throwable cause) {
-        super(cause);
-    }
 }

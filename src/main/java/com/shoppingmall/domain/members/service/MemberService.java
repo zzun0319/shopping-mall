@@ -8,6 +8,7 @@ import com.shoppingmall.domain.members.repository.MemberRepository;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
 import com.shoppingmall.domain.members.forms.MemberLoginForm;
+import com.shoppingmall.exceptions.WrongStatusException;
 import com.shoppingmall.utils.FileStoreUtil;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
@@ -90,10 +91,10 @@ public class MemberService {
         member.permitSaleChange("abc1234", permitDto.getSaleAvailable());
     }
 
-    public void deleteMember(Member member, String currentPassword) throws Exception {
+    public void deleteMember(Member member, String currentPassword) throws WrongStatusException {
 
         if(!member.getPassword().equals(currentPassword)){
-            throw new Exception();
+            throw new WrongStatusException("비밀번호가 일치하지 않습니다.");
         }
 
         memberRepository.delete(member);

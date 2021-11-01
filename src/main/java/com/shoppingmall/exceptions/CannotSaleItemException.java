@@ -1,17 +1,13 @@
 package com.shoppingmall.exceptions;
 
-public class CannotSaleItemException extends IllegalStateException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public CannotSaleItemException() {
-        super();
-    }
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class CannotSaleItemException extends RuntimeException {
 
     public CannotSaleItemException(String s) {
         super(s);
-    }
-
-    public CannotSaleItemException(String message, Throwable cause) {
-        super(message, cause);
     }
 
     public CannotSaleItemException(Throwable cause) {

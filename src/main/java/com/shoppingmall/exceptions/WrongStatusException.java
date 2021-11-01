@@ -1,20 +1,20 @@
 package com.shoppingmall.exceptions;
 
-public class WrongStatusException extends IllegalArgumentException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public WrongStatusException() {
-        super();
-    }
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class WrongStatusException extends RuntimeException {
 
     public WrongStatusException(String s) {
         super(s);
     }
 
-    public WrongStatusException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public WrongStatusException(Throwable cause) {
         super(cause);
+    }
+
+    public WrongStatusException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -10,6 +10,7 @@ import com.shoppingmall.domain.members.service.MemberService;
 import com.shoppingmall.domain.members.dtos.MemberDto;
 import com.shoppingmall.domain.members.forms.MemberJoinForm;
 import com.shoppingmall.domain.members.forms.MemberLoginForm;
+import com.shoppingmall.exceptions.NoSuchFileExceptionLinked;
 import com.shoppingmall.utils.FileStoreUtil;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -64,7 +66,8 @@ public class MemberController {
      * @return
      */
     @PostMapping
-    public String join(@Validated @ModelAttribute("joinForm") MemberJoinForm joinForm, BindingResult bindingResult) throws IOException {
+    public String join(@Validated @ModelAttribute("joinForm") MemberJoinForm joinForm,
+                       BindingResult bindingResult, HttpServletResponse response) {
 
         if(memberService.checkDuplicateId(joinForm.getLoginId())){
             bindingResult.rejectValue("loginId", "duplicate.loginId");
@@ -74,8 +77,14 @@ public class MemberController {
             return "member/join-form";
         }
 
-        memberService.join(joinForm);
-        return "redirect:/";
+        try {
+            memberService.join(joinForm);
+        } catch (IOException e) {
+            log.error("IOException 발생 : {}", e.getMessage());
+            response.sendError(400, "첨부 파일에 문제가 있습니다.");
+        } finally {
+            return "redirect:/";
+        }
     }
 
     /**
@@ -159,7 +168,9 @@ public class MemberController {
     @GetMapping("/permit/{memberId}")
     public String downloadAttachedFilePage(@PathVariable("memberId") Long id, Model model) {
         Optional<Member> om = memberRepository.findMemberById(id);
-        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원"));
+
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원입니다."));
+
         PermitDto permitDto = new PermitDto(member);
         model.addAttribute("member", permitDto);
         return "member/permitOne";
@@ -185,10 +196,16 @@ public class MemberController {
      * @throws NoSuchFileException
      */
     @GetMapping("/permit/download/{fileId}")
-    public ResponseEntity<Resource> downloadAttachedFile(@PathVariable("fileId") Long id) throws MalformedURLException, NoSuchFileException {
+    public ResponseEntity<Resource> downloadAttachedFile(@PathVariable("fileId") Long id) throws MalformedURLException {
 
         Optional<AttachedFile> oa = fileRepository.findById(id);
-        AttachedFile attachedFile = oa.orElseThrow(() -> new NoSuchFileException("해당 파일은 존재하지 않습니다."));
+        AttachedFile attachedFile = null;
+        try {
+            attachedFile = oa.orElseThrow(() -> new NoSuchFileException("해당 파일은 존재하지 않습니다."));
+        } catch (NoSuchFileException nfe) {
+            throw new NoSuchFileExceptionLinked(nfe);
+        }
+
         String originalFileName = attachedFile.getOriginalFileName();
         String storeFileName = attachedFile.getStoreFileName();
 

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +67,9 @@ public class MemberApiController {
         WebMvcLinkBuilder self
                 = linkTo(methodOn(this.getClass()).allMembers(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())));
 
-        return ResponseEntity.ok(CollectionModel.of(list, self.withSelfRel()));
+        Link documentLink = Link.of("http://localhost:8080/swagger-ui/index.html");
+
+        return ResponseEntity.ok(CollectionModel.of(list, self.withSelfRel(), documentLink.withRel("Document (Get)")));
     }
 
     /**
@@ -165,6 +168,9 @@ public class MemberApiController {
         WebMvcLinkBuilder linkForPwdUpdate = linkTo(methodOn(this.getClass()).passwordUpdate(member, new ChangePasswordForm()));
         entityModel.add(linkForPwdUpdate.withRel("PWD-CHANGE (PATCH)"));
 
+        Link documentLink = Link.of("http://localhost:8080/swagger-ui/index.html");
+        entityModel.add(documentLink.withRel("Document (Get)"));
+
         return ResponseEntity.ok().body(entityModel);
     }
 
@@ -176,7 +182,7 @@ public class MemberApiController {
     @GetMapping("/grade/{grade}")
     public ResponseEntity MembersByGrade(@PathVariable("grade") String grade) {
 
-        Grade enumGrade = null;
+        Grade enumGrade = Grade.USER;
 
         try {
             enumGrade = Grade.valueOf(grade);

@@ -32,6 +32,7 @@
             <td th:if="${page.hasNext()}"><button type="button" th:onclick="|location.href='@{/members/permit(page=${page.getNumber()+1})}'|">다음</button></td>
         </tr>
     </table>
+    <a href="/">홈으로</a>
 </div>
 
 </body>

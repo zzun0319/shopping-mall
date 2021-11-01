@@ -1,6 +1,10 @@
 package com.shoppingmall.exceptions;
 
-public class NoSuchMemberException extends IllegalStateException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NoSuchMemberException extends RuntimeException {
 
     public NoSuchMemberException() {
         super();
@@ -10,11 +14,4 @@ public class NoSuchMemberException extends IllegalStateException {
         super(s);
     }
 
-    public NoSuchMemberException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NoSuchMemberException(Throwable cause) {
-        super(cause);
-    }
 }

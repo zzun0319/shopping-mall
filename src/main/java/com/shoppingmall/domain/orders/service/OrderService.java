@@ -15,6 +15,8 @@ import com.shoppingmall.domain.orders.forms.AddressForm;
 import com.shoppingmall.domain.orders.repository.OrderRepository;
 import com.shoppingmall.domain.payment.Payment;
 import com.shoppingmall.domain.payment.forms.PayForm;
+import com.shoppingmall.exceptions.CannotSaleItemException;
+import com.shoppingmall.exceptions.NoSuchOrderException;
 import com.shoppingmall.valuetype.Address;
 import com.shoppingmall.exceptions.NoSuchMemberException;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +55,13 @@ public class OrderService {
         List<BasketItem> basketItems = new ArrayList<>();
         for (Long basketItemId : BasketItemIds) {
             Optional<BasketItem> ob = basketItemRepository.findBasketItemWithItemById(basketItemId);
-            BasketItem basketItem = ob.orElseThrow(() -> new NoSuchElementException("장바구니에 존재하지 않는 상품입니다."));
+            BasketItem basketItem = null;
+            try {
+                basketItem = ob.orElseThrow(() -> new NoSuchElementException("장바구니에 존재하지 않는 상품입니다."));
+            } catch (NoSuchElementException ne) {
+                throw new CannotSaleItemException(ne);
+            }
+
             basketItems.add(basketItem);
         }
 
@@ -103,7 +111,7 @@ public class OrderService {
     public void updatePayment(Long orderId, PayForm form) {
 
         Optional<Order> oo = orderRepository.findOrderWithPaymentByOrderId(orderId);
-        Order order = oo.orElseThrow(() -> new IllegalStateException("존재하지 않는 주문"));
+        Order order = oo.orElseThrow(() -> new NoSuchOrderException("존재하지 않는 주문"));
         order.pay(form.getPaidPrice(), form.getOption());
     }
 
@@ -114,7 +122,7 @@ public class OrderService {
     public void cancelOrder(Long orderId) {
 
         Optional<Order> oo = orderRepository.findOrderWithPaymentAndDeliveryByOrderId(orderId);
-        Order order = oo.orElseThrow(() -> new IllegalStateException("존재하지 않는 주문"));
+        Order order = oo.orElseThrow(() -> new NoSuchOrderException("존재하지 않는 주문"));
         order.cancelOrder();
     }
 

@@ -3,10 +3,7 @@ package com.shoppingmall;
 import com.shoppingmall.converter.PaymentOptionToStringConverter;
 import com.shoppingmall.converter.StringToPaymentOptionConverter;
 import com.shoppingmall.formatter.NumberFormatter;
-import com.shoppingmall.interceptors.AdminCheckInterceptor;
-import com.shoppingmall.interceptors.LogInterceptor;
-import com.shoppingmall.interceptors.LoginCheckInterceptor;
-import com.shoppingmall.interceptors.SalesAvailableCheckInterceptor;
+import com.shoppingmall.interceptors.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -29,6 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
         registry.addInterceptor(new LogInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
@@ -37,7 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/members", "/members/login", "/members/logout", "/css/**", "/*.ico", "/error");
+                .excludePathPatterns("/", "/members", "/members/login", "/members/logout", "/css/**", "/*.ico", "/error", "/api/**");
 
         registry.addInterceptor(new SalesAvailableCheckInterceptor())
                 .order(3)
@@ -46,8 +44,9 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new AdminCheckInterceptor())
                 .order(4)
-                .addPathPatterns("/api/**", "/members/permit/**", "/swagger-ui/index.html", "/v2/api-docs")
+                .addPathPatterns("/members/permit/**", "/swagger-ui/index.html", "/v2/api-docs")
                 .excludePathPatterns("/css/**", "/*.ico", "/error");
+
     }
 
     @Bean

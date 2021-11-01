@@ -1,20 +1,13 @@
 package com.shoppingmall.exceptions;
 
-public class NoSuchItemException extends IllegalStateException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public NoSuchItemException() {
-        super();
-    }
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NoSuchItemException extends RuntimeException {
 
     public NoSuchItemException(String s) {
         super(s);
     }
 
-    public NoSuchItemException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NoSuchItemException(Throwable cause) {
-        super(cause);
-    }
 }

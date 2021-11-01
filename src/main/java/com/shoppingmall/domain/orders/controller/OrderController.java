@@ -16,6 +16,7 @@ import com.shoppingmall.domain.orders.service.OrderService;
 import com.shoppingmall.exceptions.CannotChangeAddressException;
 import com.shoppingmall.exceptions.NoSuchItemException;
 import com.shoppingmall.exceptions.NoSuchMemberException;
+import com.shoppingmall.exceptions.NotEnoughStockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -78,7 +79,7 @@ public class OrderController {
         Optional<Item> oi = itemRepository.findById(itemId);
         Item item = oi.orElseThrow(() -> new NoSuchItemException("존재하지 않는 상품"));
         if(item.getStockQuantity() < qty){
-            throw new CannotChangeAddressException("재고보다 많은 상품을 주문했습니다.");
+            throw new NotEnoughStockException("재고보다 많은 상품을 주문했습니다.");
         }
 
         if (loginMember != null) {

@@ -37,3 +37,9 @@ logging.level:
 file:
   attached-dir: D:/uploadLocation/
   image-dir: D:/imageLocation/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
