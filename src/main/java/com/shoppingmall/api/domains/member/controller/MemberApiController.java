@@ -3,7 +3,6 @@ package com.shoppingmall.api.domains.member.controller;
 import com.shoppingmall.api.domains.member.dtos.MemberResponse;
 import com.shoppingmall.api.domains.member.dtos.MemberResponseByLoginId;
 import com.shoppingmall.api.domains.member.dtos.RequestJoin;
-import com.shoppingmall.api.exceptions.ExceptionResponse;
 import com.shoppingmall.domain.members.Member;
 import com.shoppingmall.domain.members.forms.ChangePasswordForm;
 import com.shoppingmall.domain.members.repository.MemberRepository;
@@ -81,8 +80,7 @@ public class MemberApiController {
     public ResponseEntity join(@Validated @RequestBody RequestJoin requestJoin){
 
         if(memberService.checkDuplicateId(requestJoin.getLoginId())){
-            ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), "아이디 중복", "다른 아이디를 입력해주세요");
-            return ResponseEntity.badRequest().body(er);
+            throw new WrongStatusException("다른 아이디를 입력해주세요");
         }
 
         // 가입 성공
@@ -95,11 +93,14 @@ public class MemberApiController {
 
     /**
      * 회원 한명 조회
-     * @param member
+     * @param id
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> oneMember(@PathVariable("id") Member member){
+    public ResponseEntity<MemberResponse> oneMember(@PathVariable("id") Long id){
+
+        Optional<Member> om = memberRepository.findById(id);
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원입니다."));
 
         MemberResponse memberResponse = new MemberResponse(member);
 
@@ -108,21 +109,20 @@ public class MemberApiController {
 
     /**
      * 비밀번호 변경
-     * @param member
+     * @param id
      * @param form
      * @return
      */
     @PatchMapping("/{id}")
-    public ResponseEntity passwordUpdate(@PathVariable("id") Member member, @RequestBody ChangePasswordForm form) {
+    public ResponseEntity passwordUpdate(@PathVariable("id") Long id, @RequestBody ChangePasswordForm form) {
 
+        Optional<Member> om = memberRepository.findById(id);
+        Member member = om.orElseThrow(() -> new NoSuchMemberException("존재하지 않는 회원입니다."));
         if(!member.getPassword().equals(form.getOldPassword())){
-            ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), "비밀 번호 오류", "현재 비밀번호를 틀렸습니다.");
-            return ResponseEntity.badRequest().body(er);
+            throw new WrongStatusException("현재 비밀번호를 틀렸습니다.");
         }
-
         if(!form.getNewPassword().equals(form.getNewPasswordCheck())){
-            ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), "비밀 번호 오류", "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다");
-            return ResponseEntity.badRequest().body(er);
+            throw new WrongStatusException("새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다");
         }
 
         memberService.passwordChange(member, form);
@@ -165,7 +165,7 @@ public class MemberApiController {
         WebMvcLinkBuilder linkForAllMembers = linkTo(methodOn(this.getClass()).allMembers(PageRequest.of(0, 2)));
         entityModel.add(linkForAllMembers.withRel("All-Members (GET)"));
 
-        WebMvcLinkBuilder linkForPwdUpdate = linkTo(methodOn(this.getClass()).passwordUpdate(member, new ChangePasswordForm()));
+        WebMvcLinkBuilder linkForPwdUpdate = linkTo(methodOn(this.getClass()).passwordUpdate(member.getId(), new ChangePasswordForm()));
         entityModel.add(linkForPwdUpdate.withRel("PWD-CHANGE (PATCH)"));
 
         Link documentLink = Link.of("http://localhost:8080/swagger-ui/index.html");
